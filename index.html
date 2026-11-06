@@ -259,7 +259,15 @@ const CARDS = {
   res: '10장 PT 슬라이드와 발표 대본 완성. 숫자는 모두 가정값.',
   link: ['슬라이드 열기', 'https://view.officeapps.live.com/op/view.aspx?src=https://dixmee7-lab.github.io/portfolio-hub/ppt/kd-pt-slides.pptx']
  },
- 5: {}, 6: {}
+ 5: {
+  title: 'KD/CBU 공통 기준 비교 (팀 웹앱)',
+  prob: 'KD와 완성차(CBU) 수출의 비용을 비교할 때 부서마다 계산 가정이 달라 판단이 늦어진다.',
+  work: '환율, 부품가격, 운임, 관세율, 조립비 등 8개 공통 가정을 입력·저장하고, KD와 CBU 총비용을 비교해 이력으로 남기는 웹앱. 팀 결과물.',
+  tech: 'Google Apps Script, Google 스프레드시트 구조, HTML/CSS/JavaScript',
+  res: '가정 입력, 비용 비교, 이력 저장이 동작. 데이터는 모두 가상 값이며, 공개 데모는 입력이 보는 사람의 브라우저에만 저장됨.',
+  link: ['앱 열기', 'compare/index.html']
+ },
+ 6: {}
 };
 const EDIT_ICON = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 21h8"/><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>';
 const $ = id => document.getElementById(id);

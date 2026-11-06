@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0B1425">
+  <title>KD/CBU | Cost Intelligence</title>
+  <style>
+    :root {
+      --canvas:#f5f7fb; --white:#ffffff; --ink:#152238; --secondary:#60718a;
+      --navy:#0b1425; --navy2:#15253c; --accent:#5bd9b4; --accent-dark:#078b6c;
+      --blue:#5f8fe6; --line:#e4eaf2; --soft:#f5f8fd; --shadow:0 18px 55px rgba(25,48,78,.055);
+    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; min-height:100vh; background:var(--canvas); color:var(--ink);
+      font: 14px/1.65 -apple-system,BlinkMacSystemFont,"Pretendard","Segoe UI","맑은 고딕",sans-serif;
+      -webkit-font-smoothing:antialiased; }
+    button, input, select { font:inherit; }
+    button { cursor:pointer; }
+    button:disabled { cursor:wait; opacity:.5; }
+    button:focus-visible, input:focus-visible, select:focus-visible { outline:3px solid #8dbbff; outline-offset:3px; }
+    [hidden] { display:none!important; }
+    .shell { max-width:1216px; margin:0 auto; padding:0 25px; }
+    .masthead { position:relative; overflow:hidden; background:var(--navy); color:#fff; }
+    .masthead:before { content:""; position:absolute; width:700px; height:700px; right:-215px; top:-495px;
+      border:1px solid rgba(139,205,255,.16); border-radius:50%; box-shadow:0 0 0 110px rgba(73,106,163,.035),0 0 0 230px rgba(73,106,163,.026); pointer-events:none; }
+    .masthead:after { content:""; position:absolute; width:340px; height:340px; right:5%; top:120px;
+      background:radial-gradient(circle,rgba(55,213,171,.10),transparent 67%); pointer-events:none; }
+    .head-row { height:81px; display:flex; align-items:center; justify-content:space-between;
+      border-bottom:1px solid rgba(230,244,255,.10); gap:15px; position:relative; z-index:1; }
+    .brand { display:flex; align-items:center; gap:12px; font-weight:820; font-size:17px; letter-spacing:-.6px; }
+    .brand-icon { height:40px; width:40px; display:grid; place-items:center; background:linear-gradient(145deg,#b9fae3,#45c9a6); color:#0a2d2b;
+      border-radius:12px; box-shadow:0 8px 32px rgba(74,210,173,.20); font-weight:950; font-size:16px; letter-spacing:-1.5px; }
+    .brand span:last-child small { display:block; font-size:9px; color:#9daec7; letter-spacing:2.1px; line-height:1.7; font-weight:700; }
+    .head-meta { display:flex; align-items:center; gap:13px; font-size:11px; color:#a6b5c8; }
+    .head-meta .env { padding:7px 11px; border:1px solid rgba(86,220,180,.32); border-radius:100px;
+      color:#9df3d4; background:rgba(91,217,180,.065); font-size:10px; font-weight:800; letter-spacing:.4px; }
+    .hero { position:relative; z-index:1; padding:45px 0 26px; }
+    .micro { display:flex; align-items:center; gap:7px; color:#8da5c1; font-size:11px; letter-spacing:2.1px; font-weight:800; text-transform:uppercase; }
+    .micro:before { content:""; width:21px; height:2px; background:var(--accent); }
+    h1 { margin:11px 0 9px; font-size:clamp(27px,4vw,39px); line-height:1.35; font-weight:850; letter-spacing:-1.65px; }
+    .hero p { margin:0; color:#b0bdd1; font-size:13px; line-height:1.85; }
+    .tab-holder { position:relative; z-index:2; display:flex; align-items:center; justify-content:space-between;
+      margin-top:27px; gap:15px; }
+    .tabs { display:flex; gap:4px; padding:5px; border:1px solid rgba(220,235,255,.12);
+      background:rgba(255,255,255,.075); border-radius:13px 13px 0 0; }
+    .tabs button { display:flex; align-items:center; gap:10px; border:0; border-radius:9px 9px 0 0;
+      padding:12px 23px; color:#b1bfd2; background:transparent; font-size:13px; font-weight:800; transition:.18s ease; }
+    .tabs button:hover { color:#fff; background:rgba(255,255,255,.06); }
+    .tabs button.active { color:#0a292b; background:#b9f5e2; box-shadow:0 5px 20px rgba(76,218,181,.11); }
+    .tab-symbol { display:inline-flex; align-items:center; justify-content:center; width:21px; height:21px;
+      border-radius:6px; background:rgba(180,200,230,.14); font-size:12px; }
+    button.active .tab-symbol { background:rgba(0,85,71,.1); }
+    .tab-hint { font-size:11px; color:#8195b0; letter-spacing:.2px; }
+    main { padding:29px 25px 64px!important; }
+    .section-kicker { color:var(--accent-dark); font-size:10px; font-weight:850; letter-spacing:1.5px; }
+    .section-heading { margin:0 0 21px; display:flex; align-items:end; justify-content:space-between; gap:12px; }
+    .section-heading h2 { margin:4px 0 0; font-size:22px; letter-spacing:-.8px; line-height:1.35; }
+    .section-heading p { margin:7px 0 0; color:var(--secondary); font-size:12px; }
+    .step-mark { padding:8px 11px; background:#e7f6f1; color:#0d876a; border-radius:9px;
+      font-size:11px; letter-spacing:.7px; font-weight:850; white-space:nowrap; }
+    .card { background:var(--white); border:1px solid var(--line); border-radius:17px; padding:27px;
+      box-shadow:var(--shadow); margin-bottom:17px; }
+    .input-layout { display:grid; grid-template-columns:minmax(0,1.65fr) minmax(270px,.8fr); gap:17px; align-items:start; }
+    .input-card { padding:29px 31px; }
+    fieldset { padding:0; margin:0; border:0; min-width:0; }
+    .form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px 17px; }
+    .full { grid-column:1/-1; }
+    label { display:block; margin-bottom:8px; font-size:12px; font-weight:800; color:#263750; }
+    input, select { display:block; width:100%; height:49px; border:1px solid #d9e2ee; border-radius:10px;
+      padding:10px 14px; background:#f9fbfd; color:#1c304a; font-size:13px; transition:.18s ease; }
+    input:hover,select:hover { border-color:#a8b9d0; }
+    input:focus,select:focus { outline:none; border-color:#36c79f; background:white; box-shadow:0 0 0 4px rgba(72,208,169,.12); }
+    input::placeholder { color:#a0afc1; }
+    .field-sub { font-size:11px; color:#8091a4; padding-top:6px; min-height:22px; }
+    .field-help { display:flex; align-items:flex-start; gap:8px; margin:22px 0 0;
+      padding:12px; color:#61748c; background:#f7f9fc; font-size:11px; line-height:1.8; border-radius:9px; }
+    .field-help:before { content:"i"; flex:none; display:grid; place-items:center; width:17px; height:17px;
+      border-radius:50%; background:#e6edf5; color:#69809b; font-size:11px; font-weight:900; }
+    .primary, .secondary, .ghost { display:inline-flex; align-items:center; justify-content:center; gap:9px;
+      border-radius:10px; border:1px solid transparent; min-height:44px; font-weight:800; font-size:12px;
+      padding:11px 17px; transition:transform .15s ease,box-shadow .15s ease,background .15s ease; }
+    .primary { background:#0f263d; color:white; box-shadow:0 6px 13px rgba(14,38,61,.13); }
+    .primary:hover:not(:disabled) { background:#1d3e59; transform:translateY(-1px); box-shadow:0 9px 20px rgba(14,38,61,.19); }
+    .secondary { border-color:#d6e1ec; background:white; color:#2d435d; }
+    .secondary:hover:not(:disabled), .ghost:hover:not(:disabled) { background:#f0f6fa; }
+    .ghost { color:#345373; background:#eef3f8; }
+    .wide { width:100%; margin-top:20px; min-height:49px; }
+    .primary.arrow:after { content:"↗"; margin-left:auto; font-size:16px; font-weight:400; }
+    .support-card { position:relative; overflow:hidden; color:#d6e7f5; background:linear-gradient(155deg,#172d47,#0b182b 90%);
+      border:1px solid #1d344f; border-radius:17px; padding:27px 25px; box-shadow:var(--shadow); }
+    .support-card:before { content:""; position:absolute; width:200px; height:200px; right:-110px; top:-105px;
+      border:1px solid rgba(141,219,205,.2); border-radius:50%; box-shadow:0 0 0 50px rgba(169,245,207,.025); }
+    .support-tag { display:inline-flex; align-items:center; gap:6px; color:#a5f1d5; font-size:10px; font-weight:850; letter-spacing:1.5px; }
+    .support-tag:before { content:""; width:6px; height:6px; border-radius:50%; background:#8ef0c8; box-shadow:0 0 0 4px rgba(142,240,200,.10); }
+    .support-card h3 { margin:14px 0 11px; color:#fff; font-size:18px; line-height:1.5; letter-spacing:-.45px; }
+    .support-card p { color:#9bb0c9; font-size:12px; line-height:1.85; margin:0; }
+    .workflow { margin:26px 0 0; padding:0; list-style:none; }
+    .workflow li { position:relative; display:flex; gap:11px; align-items:flex-start; padding-bottom:19px; font-size:12px; color:#b8c9db; }
+    .workflow li:not(:last-child):before { content:""; position:absolute; left:13px; top:26px; bottom:0; width:1px; background:rgba(196,223,246,.18); }
+    .workflow .circle { display:grid; place-items:center; flex:none; width:27px; height:27px;
+      border:1px solid #436079; border-radius:50%; color:#9cf3d5; font-size:10px; font-weight:800; }
+    .workflow b { color:#fff; display:block; margin:1px 0 3px; font-size:12px; }
+    .workflow small { color:#9badc4; line-height:1.7; }
+    .support-foot { border-top:1px solid rgba(255,255,255,.1); margin-top:7px; padding-top:17px; color:#8fa5bd; font-size:11px; }
+    .message { padding:12px 15px; margin-top:15px; border-radius:10px; line-height:1.7; font-size:12px;
+      white-space:pre-wrap; overflow-wrap:anywhere; border:1px solid transparent; }
+    .message:empty { display:none; }
+    .info { color:#22558a; background:#eef6ff; border-color:#dceaf9; }
+    .success { color:#0c7256; background:#eaf9f2; border-color:#cceddb; }
+    .error { color:#a32842; background:#fff0f2; border-color:#f7d5df; }
+    .warning { color:#7a5919; background:#fffaef; border-color:#f2dfb7; }
+    .result-title { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:16px; }
+    .result-title h2 { margin:0; font-size:20px; letter-spacing:-.6px; }
+    .result-title .push { margin-left:auto; }
+    .status-dot { padding:5px 10px; border-radius:8px; color:#098566; background:#e4f8ef; font-size:10px; font-weight:800; }
+    .top-result-card { padding:26px; }
+    .metric-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin:21px 0 15px; }
+    .metric { padding:23px; border-radius:14px; position:relative; overflow:hidden; }
+    .metric:first-child { background:linear-gradient(150deg,#142941,#0d1b2f); color:white; }
+    .metric:last-child { background:linear-gradient(145deg,#eff3fa,#e8eef7); color:#203654; }
+    .metric:after { content:""; position:absolute; width:130px; height:130px; right:-65px; top:-65px;
+      border-radius:50%; border:1px solid rgba(127,176,211,.16); }
+    .metric .name { font-weight:700; font-size:12px; opacity:.77; }
+    .metric strong { display:block; margin:12px 0 13px; font-size:clamp(21px,3vw,30px); line-height:1.25;
+      white-space:nowrap; letter-spacing:-1.2px; font-weight:850; overflow-wrap:anywhere; font-variant-numeric:tabular-nums; }
+    .metric small { font-size:11px; opacity:.7; }
+    .compare-line { height:6px; margin:16px 0 5px; border-radius:100px; overflow:hidden; background:rgba(151,178,208,.23); }
+    .compare-line>div { height:100%; background:linear-gradient(90deg,#43cca6,#a0f2d5); width:0%; border-radius:100px; transition:width .35s ease; }
+    .compare-line.cbu>div { background:linear-gradient(90deg,#708eb6,#4775b5); }
+    .winner { display:flex; align-items:center; gap:13px; border:1px solid #cdece1; background:#eaf8f2;
+      padding:17px 20px; border-radius:12px; color:#08765b; font-size:15px; font-weight:850; line-height:1.55; }
+    .winner:before { content:"✓"; display:grid; flex:none; place-items:center; background:#1dba8b; color:#fff;
+      width:28px; height:28px; border-radius:50%; font-size:15px; }
+    .small { font-size:11px; color:#8490a3; }
+    h3 { margin:23px 0 12px; font-size:15px; letter-spacing:-.3px; }
+    .two { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+    .detail { padding:17px 20px; border:1px solid var(--line); background:#fbfcfe; border-radius:12px; }
+    .detail>b { display:flex; align-items:center; gap:8px; color:#273950; font-size:13px; }
+    .detail>b:before { content:""; height:9px; width:9px; border-radius:3px; background:#2fbf9e; }
+    .detail:last-child>b:before { background:#6089c6; }
+    .costline { display:flex; justify-content:space-between; gap:12px; border-bottom:1px dashed #e5ebf1;
+      padding:10px 0; font-size:12px; color:#566b81; }
+    .costline span:last-child { color:#1c3048; font-weight:800; white-space:nowrap; font-variant-numeric:tabular-nums; }
+    .costline:last-child { border:0; padding-bottom:0; }
+    .warning-list { padding-left:19px; margin:9px 0 0; font-size:12px; line-height:1.8; }
+    .barrow { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+    .barrow h2 { margin:0; font-size:20px; letter-spacing:-.7px; }
+    .barrow .sub { margin-top:6px; }
+    .sub { font-size:12px; color:var(--secondary); line-height:1.8; }
+    .note { background:#f5f8fc; border:1px solid #e8eef5; color:#70839a; font-size:11px;
+      border-radius:10px; padding:12px 14px; margin-top:17px; line-height:1.8; }
+    .note strong,.note b { color:#3a526c; }
+    .data-scroll { margin-top:17px; max-width:100%; overflow:auto; border:1px solid var(--line); border-radius:11px; }
+    table { width:100%; border-collapse:separate; border-spacing:0; white-space:nowrap; font-size:11px; }
+    thead { position:sticky; top:0; z-index:1; }
+    th { font-size:11px; font-weight:800; color:#5c7189; background:#f5f8fc; text-align:left; }
+    th,td { padding:13px 15px; border-bottom:1px solid #edf1f6; }
+    tbody tr:hover { background:#fafcff; }
+    tbody tr:last-child td { border-bottom:0; }
+    td { color:#41546c; }
+    td:first-child { font-weight:750; color:#223953; }
+    td.num { text-align:right; font-variant-numeric:tabular-nums; }
+    .empty { text-align:center; font-weight:500!important; padding:27px; color:#889bb0!important; }
+    .kpis { margin:20px 0; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:13px; }
+    .kpi { padding:18px 19px; border-radius:12px; background:#f6f9fc; border:1px solid #edf1f6; }
+    .kpi .value { font-size:26px; line-height:1.4; font-weight:850; letter-spacing:-.8px; color:#243c56; }
+    .kpi .name { font-size:11px; color:#8392a7; margin-top:4px; }
+    .footer { display:flex; justify-content:space-between; align-items:center; gap:16px; margin:17px 0 0;
+      padding:12px 3px; color:#97a4b4; font-size:10px; letter-spacing:.3px; }
+    .footer b { font-size:11px; letter-spacing:.7px; color:#74869a; }
+    @media (max-width:860px) {
+      .input-layout { grid-template-columns:1fr; }
+      .support-card { display:none; }
+      .tab-hint { display:none; }
+    }
+    @media (max-width:640px) {
+      .shell { padding:0 16px; }
+      .head-row { height:70px; }
+      .head-meta span:not(.env) { display:none; }
+      .hero { padding:30px 0 22px; }
+      h1 { font-size:28px; letter-spacing:-1.25px; }
+      .hero p { font-size:11px; }
+      .tabs { width:100%; }
+      .tabs button { flex:1; padding:12px 9px; justify-content:center; gap:6px; font-size:12px; }
+      .tab-holder { margin-top:20px; }
+      main { padding:19px 16px 38px!important; }
+      .card, .input-card, .top-result-card { padding:19px 16px; border-radius:14px; }
+      .form-grid,.metric-grid,.two { grid-template-columns:1fr; gap:13px; }
+      .full { grid-column:auto; }
+      .section-heading h2 { font-size:20px; }
+      .metric strong { font-size:25px; }
+      .kpis { grid-template-columns:1fr 1fr; gap:9px; }
+      .kpis .kpi:last-child { grid-column:1/-1; }
+      .kpi .value { font-size:22px; }
+      .barrow { align-items:flex-start; }
+      .barrow button { width:100%; }
+      .footer { flex-direction:column; align-items:flex-start; gap:4px; }
+    }
+    @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } * { transition:none!important; } }
+
+    /* 처음 방문자 안내 / 항목별 이력 */
+    .welcome { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:20px;
+      padding:24px 27px; background:#fff; border:1px solid var(--line); border-radius:17px; margin-bottom:22px;
+      box-shadow:var(--shadow); }
+    .welcome strong { font-size:17px; letter-spacing:-.5px; display:block; margin:5px 0 8px; }
+    .welcome p { margin:0; color:#61728a; font-size:12px; line-height:1.85; }
+    .welcome-kicker { font-size:10px; font-weight:850; color:#078b6c; letter-spacing:1.2px; }
+    .welcome-actions { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
+    .mini-step { border-radius:11px; background:#f3f7fa; border:1px solid #e9eff4; padding:13px 12px; }
+    .mini-step span { color:#0b9e76; font-weight:850; font-size:11px; }
+    .mini-step b { display:block; margin:4px 0; font-size:12px; }
+    .mini-step small { display:block; color:#73859b; font-size:10px; line-height:1.55; }
+    .how-compare { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:19px; }
+    .how-compare .guide-card { background:#f5f8fc; border:1px solid #e5edf4; padding:16px; border-radius:12px; }
+    .how-compare .guide-card b { display:block; color:#253e59; font-size:14px; }
+    .how-compare .guide-card p { color:#62758d; font-size:11px; line-height:1.85; margin:6px 0 0; }
+    .field-explainer { border:1px solid #dbeee7; background:#f0faf6; border-radius:10px; padding:13px 15px;
+      font-size:12px; line-height:1.8; color:#315d50; margin:17px 0 0; }
+    .field-explainer b { font-size:13px; color:#13674f; }
+    .extra-label { display:block; font-size:11px; font-weight:600; color:#6c7f96; margin-top:6px; }
+    .linkline { display:flex; flex-wrap:wrap; align-items:center; gap:7px; }
+    .safe-link { color:#0d759e; text-decoration:underline; text-underline-offset:3px; font-weight:750; }
+    .safe-link:hover { color:#065b80; }
+    .source-detail { font-size:10px; font-weight:500; color:#71849b; }
+    .active-rule { display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:12px 15px; border-radius:10px;
+      background:#eef8f3; color:#176d52; font-size:12px; margin:12px 0; }
+    .active-rule b { font-size:13px; }
+    .history-chip-grid { display:flex; flex-wrap:wrap; gap:9px; margin:13px 0 12px; }
+    .history-chip { display:inline-flex; align-items:center; gap:8px; min-height:39px;
+      border:1px solid #d8e5ee; background:#f7fafe; border-radius:999px; padding:8px 13px;
+      color:#2d4560; font-size:12px; font-weight:750; box-shadow:0 2px 6px rgba(30,45,70,.02); }
+    .history-chip:hover { background:#eaf2fb; border-color:#a8c6e0; }
+    .history-chip.current { background:#e5f8ee; color:#076d52; border-color:#5bc9a1; }
+    .history-chip .mini-date { font-size:10px; font-weight:500; opacity:.75; }
+    .history-chip .mini-check { font-size:10px; font-weight:850; }
+    .history-details { background:#f8fafc; border:1px solid #e4eaf2; padding:13px 15px;
+      border-radius:10px; font-size:11px; color:#576f85; line-height:1.85; overflow-wrap:anywhere; }
+    .history-details b { color:#283f57; }
+    .tiny-button { border:1px solid #cfe2ed; background:white; color:#0d7188; font-weight:800;
+      border-radius:8px; padding:7px 10px; font-size:11px; white-space:nowrap; }
+    .tiny-button:hover { background:#e8f7f4; }
+    .state-pill { display:inline-flex; padding:3px 8px; border-radius:999px; font-size:10px; font-weight:850;
+      color:#08755d; background:#def6ed; }
+    .state-pill.older { color:#9a6813; background:#fff4dc; }
+    .guide-inline { padding:13px 16px; background:#edf7ff; border:1px solid #d8e8fa;
+      color:#2d597f; border-radius:10px; font-size:12px; line-height:1.8; margin-bottom:14px; }
+    .method-strip { margin-top:15px; border:1px dashed #cbdbe9; background:#f8fafc; border-radius:10px;
+      padding:12px 15px; color:#53677f; font-size:11px; line-height:1.9; }
+    .method-strip strong { color:#243a55; }
+    .compare-alert { border-radius:9px; padding:12px 14px; margin:13px 0;
+      background:#eaf9f3; color:#0b7259; font-size:12px; font-weight:600; }
+    .input-cta { display:inline-flex; align-items:center; gap:6px; background:transparent;
+      color:#0d8265; border:0; padding:5px 0; font-size:12px; font-weight:850; text-decoration:underline; text-underline-offset:3px; }
+    .understated { font-size:11px; color:#7e90a4; line-height:1.8; }
+    .source-cell { min-width:175px; max-width:280px; white-space:normal; overflow-wrap:anywhere; }
+    .sheet-cell { font-size:10px; color:#8395a9; }
+    @media(max-width:860px) { .welcome { grid-template-columns:1fr; } }
+    @media(max-width:640px) { .welcome { padding:18px; } .welcome-actions { grid-template-columns:1fr; }
+      .how-compare { grid-template-columns:1fr; } .mini-step { padding:10px 13px; }
+      .history-chip { padding:8px 11px; } }
+
+  </style>
+</head>
+<body>
+<header class="masthead">
+  <div class="shell">
+    <div class="head-row">
+      <div class="brand" aria-label="Cost Intelligence">
+        <div class="brand-icon">K/C</div>
+        <div><span>COST INTELLIGENCE</span><small>KD / CBU DECISION SYSTEM</small></div>
+      </div>
+      <div class="head-meta"><span>1조 · KD/CBU 프로젝트</span><span class="env">● DEMO DATA</span></div>
+    </div>
+    <div class="hero">
+      <div class="micro">DECISION SUPPORT DASHBOARD</div>
+      <h1>부품 수출과 완성차 수출,<br>어느 쪽이 더 저렴할까?</h1>
+      <p>운임·환율·관세율이 달라졌을 때 자동차 한 대당 KD와 CBU의 예상 비용을 비교하고, 사용한 근거와 결과를 기록하는 교육용 앱입니다.</p>
+    </div>
+    <div class="tab-holder">
+      <nav class="tabs" aria-label="화면 선택">
+        <button type="button" id="inputTab" class="active" aria-pressed="true"><span class="tab-symbol" aria-hidden="true">01</span> 가정 입력</button>
+        <button type="button" id="summaryTab" aria-pressed="false"><span class="tab-symbol" aria-hidden="true">02</span> 비교 요약 / 이력</button>
+      </nav>
+      <div class="tab-hint">PRD MUST 01 / 02 / 03</div>
+    </div>
+  </div>
+</header>
+<main class="shell">
+  <section class="welcome" aria-label="앱 사용법 처음부터 보기">
+    <div>
+      <div class="welcome-kicker">처음 사용하는 분을 위한 30초 안내</div>
+      <strong>이 앱은 수출 방식의 ‘대당 예상 비용’을 비교합니다.</strong>
+      <p><b>KD</b>는 부품을 해외로 보내 현지에서 조립하는 방식, <b>CBU</b>는 완성된 차량을 해외로 보내는 방식입니다. 두 방식의 가상 비용을 같은 화면에서 확인하고 더 낮은 쪽을 표시합니다.</p>
+      <p style="margin-top:9px">이미 가상 데이터가 입력되어 있다면 <button type="button" class="input-cta" id="quickCompare">바로 비용 비교 보기 →</button></p>
+    </div>
+    <div class="welcome-actions" aria-label="3단계 사용 흐름">
+      <div class="mini-step"><span>01</span><b>기준값 입력</b><small>환율·운임 등이 바뀐 항목만 새로 저장</small></div>
+      <div class="mini-step"><span>02</span><b>비용 비교</b><small>8개 항목으로 KD·CBU 총비용 계산</small></div>
+      <div class="mini-step"><span>03</span><b>결과 기록</b><small>필요하면 비교 결과를 이력으로 저장</small></div>
+    </div>
+  </section>
+  <section id="inputPanel">
+    <div class="section-heading">
+      <div><div class="section-kicker">01 · DATA INPUT</div><h2>공통 가정 관리</h2>
+        <p>비용 항목의 의미·담당 업무·단위를 확인하고 변경된 가정값을 입력하세요. 기존 기록은 삭제되지 않습니다.</p></div>
+      <span class="step-mark">STEP 01 / 02</span>
+    </div>
+    <div class="input-layout">
+      <div class="card input-card">
+        <form id="assumptionForm">
+          <fieldset id="fields" disabled>
+            <div class="form-grid">
+              <div><label for="item">① 어떤 비용 정보가 변경됐나요? <span aria-hidden="true">*</span></label><select id="item" required></select>
+                <div class="field-sub">예: 물류비가 올랐다면 ‘KD 운임’ 또는 ‘CBU 운임’을 선택</div></div>
+              <div><label for="value">② 변경 후 숫자를 입력하세요 <span aria-hidden="true">*</span></label>
+                <input id="value" type="number" step="any" required placeholder="숫자를 입력하세요">
+                <div id="unit" class="field-sub">항목을 먼저 선택해 주세요.</div></div>
+              <div class="full"><label for="source">③ 이 숫자의 근거자료 이름 <span aria-hidden="true">*</span></label>
+                <input id="source" type="text" maxlength="200" required placeholder="예: 교육용 물류비 산정표 / 2026년 11월 가정값">
+                <div class="extra-label">자료의 이름을 적어 두면 비교 화면에도 그대로 표시됩니다.</div></div>
+              <div class="full"><label for="evidenceUrl">④ 근거자료 열기 링크 (선택)</label>
+                <input id="evidenceUrl" type="url" maxlength="500" inputmode="url" placeholder="https://drive.google.com/… 또는 https://…">
+                <div class="extra-label">Google Drive 등의 공유 가능한 HTTPS 자료 링크를 넣으면 출처를 클릭해 열 수 있습니다. 실제 파일 업로드 기능은 아닙니다.</div>
+                <a id="linkPreview" class="safe-link" target="_blank" rel="noopener noreferrer" hidden>입력한 근거자료 링크 미리 열기</a></div>
+              <div><label for="baseDate">⑤ 이 금액이 적용되는 날짜 <span aria-hidden="true">*</span></label><input id="baseDate" type="date" required>
+                <div class="extra-label">입력한 날이 아니라 값의 기준이 되는 날짜입니다.</div></div>
+              <div><label for="role">⑥ 자료를 입력한 담당 업무 <span aria-hidden="true">*</span></label><select id="role" required></select>
+                <div class="extra-label">사업기획 / 물류 / 통관 / 재무 / 생산 중 선택</div></div>
+            </div>
+            <div id="itemExplainer" class="field-explainer" role="note">먼저 항목을 선택해 주세요. 어떤 비용인지와 담당 업무 예시를 알려드립니다.</div>
+            <p class="field-help">기존 값을 덮어쓰지 않고 새 행에 추가합니다. 예: KD 운임 700달러가 이미 있으면 새 값 800달러만 저장하면 됩니다. 웹앱 저장 시각은 자동 기록됩니다.</p>
+            <button id="saveButton" class="primary wide arrow" type="submit">공통 가정 저장</button>
+          </fieldset>
+        </form>
+        <div id="inputStatus" class="message" role="status" aria-live="polite"></div>
+        <div id="savedRecord" class="message info" hidden></div>
+      </div>
+      <aside class="support-card" aria-label="이용 절차 안내">
+        <div class="support-tag">WORKFLOW GUIDE</div>
+        <h3>데이터는 한 번 입력하고,<br>비교는 같은 기준으로.</h3>
+        <p>모든 기록은 원본 가정입력 시트에 남으며 기존 값은 덮어쓰지 않습니다.</p>
+        <ol class="workflow">
+          <li><span class="circle">01</span><div><b>공통 가정 입력</b><small>항목 / 값 / 출처 / 기준일을 명확하게 기록</small></div></li>
+          <li><span class="circle">02</span><div><b>비용 자동 비교</b><small>입력된 최신 8개 항목으로 KD / CBU 계산</small></div></li>
+          <li><span class="circle">03</span><div><b>결과 이력 보관</b><small>결과 저장 시 비교이력 탭에 변경 번호 생성</small></div></li>
+        </ol>
+        <div class="support-foot">EDUCATIONAL PROTOTYPE · 가상 데이터만 사용</div>
+      </aside>
+    </div>
+    <div id="itemHistoryCard" class="card" aria-live="polite">
+      <div class="barrow"><div><div class="section-kicker">PARAMETER HISTORY</div>
+        <h2>같은 항목의 이전 입력값 / 계산 기준 선택</h2>
+        <p class="sub">선택한 항목의 입력 이력을 태그(토큰)로 표시합니다. 원하는 과거 값을 눌러 계산에 적용할 수 있습니다.</p></div>
+        <button id="reloadItemHistory" type="button" class="secondary">↻ 이력 새로고침</button>
+      </div>
+      <div class="active-rule" id="currentSelection">위에서 항목을 선택하면 현재 계산에 적용 중인 값이 표시됩니다.</div>
+      <div id="itemHistoryStatus" class="understated" role="status"></div>
+      <div id="historyChips" class="history-chip-grid"></div>
+      <div id="historyDetail" class="history-details" hidden></div>
+      <div class="method-strip"><strong>기준값 교체는 무엇인가요?</strong> 시트의 원본 행을 바꾸는 것이 아니라 ‘이번 비교 계산에 사용할 기록’을 선택하는 기능입니다. 다른 사용자에게도 같은 선택값이 적용됩니다. 새 값을 저장하면 그 항목은 다시 최신값으로 전환됩니다. 이 선택은 승인 절차를 의미하지 않습니다.</div>
+    </div>
+  </section>
+
+  <section id="summaryPanel" hidden>
+    <div class="section-heading">
+      <div><div class="section-kicker">02 · ANALYSIS & HISTORY</div><h2>비교 분석 대시보드</h2>
+        <p>항목별 최신값(또는 직접 선택한 이전값) 8개로 KD와 CBU의 한 대당 예상 총비용을 비교합니다.</p></div>
+      <span class="step-mark">STEP 02 / 02</span>
+    </div>
+    <div class="guide-inline">💡 <b>비교 화면은 이렇게 읽으세요.</b> 아래 KD와 CBU의 금액은 각각 자동차 1대 공급에 드는 교육용 예상 비용(원/대)입니다. <b>더 낮은 금액</b>을 가진 방식이 비용 측면에서 유리합니다. 어떤 값으로 계산했는지는 아래 ‘계산에 사용한 가정값’에서 확인하고, 기록이 필요하면 결과 저장을 누르세요.</div>
+    <div class="how-compare">
+      <div class="guide-card"><b>KD = 부품을 보내 현지에서 조립</b><p>부품가격 + 부품 운임 + 부품 관세 + 현지 조립비를 더합니다. 완성차를 현지에서 만드는 데 든다고 가정한 비용입니다.</p></div>
+      <div class="guide-card"><b>CBU = 완성차를 그대로 수출</b><p>완성차가격 + 완성차 운임 + 완성차 관세를 더합니다. 국내 완성차를 해외에 공급한다고 가정한 비용입니다.</p></div>
+    </div>
+    <div class="card top-result-card">
+      <div class="result-title">
+        <h2>1대당 총비용 비교</h2><span class="status-dot">● 현재 선택된 8개 가정값</span>
+        <div class="push"><button id="refreshButton" class="secondary" type="button">↻ &nbsp;최신 값 다시 계산</button></div>
+      </div>
+      <div id="summaryStatus" class="message" role="status" aria-live="polite"></div>
+      <div id="results" hidden>
+        <div class="metric-grid">
+          <div class="metric">
+            <div class="name">KD 총비용 · 원/대</div><strong id="kdCost">—</strong>
+            <div class="compare-line"><div id="kdBar"></div></div><small>부품 수출 + 현지 조립 기준</small>
+          </div>
+          <div class="metric">
+            <div class="name">CBU 총비용 · 원/대</div><strong id="cbuCost">—</strong>
+            <div class="compare-line cbu"><div id="cbuBar"></div></div><small>완성차 수출 기준</small>
+          </div>
+        </div>
+        <div id="winner" class="winner"></div>
+        <p class="small">막대 길이는 두 금액의 상대적인 크기입니다. 원/대 기준 / 금액은 소수 둘째 자리까지 표시 / 유리한 쪽은 반올림 전 값으로 판단</p>
+        <h3>비용 세부 구성</h3>
+        <div class="two">
+          <div class="detail"><b>KD · Cost Breakdown</b><div id="kdBreakdown"></div></div>
+          <div class="detail"><b>CBU · Cost Breakdown</b><div id="cbuBreakdown"></div></div>
+        </div>
+        <p class="method-strip">※ 계산만 하면 시트에 결과가 저장되지 않습니다. ‘비교 결과 저장’을 눌러야 비교이력 시트에 남습니다.</p>
+        <button id="saveComparisonButton" class="primary wide arrow" type="button">이 계산 결과를 비교이력에 저장</button>
+        <div id="resultSaveStatus" class="message" role="status" aria-live="polite"></div>
+      </div>
+      <div id="warningsBox" class="message warning" hidden>
+        <b>⚠ 입력값 점검 사항</b><ul id="warnings" class="warning-list"></ul>
+      </div>
+      <div class="note">교육용 단순 계산식 · KD = (부품가격 + KD 운임) × 환율 × (1 + KD 관세율/100) + 현지 조립비 / CBU = (완성차가격 + CBU 운임) × 환율 × (1 + CBU 관세율/100). 실제 통관·세금 산정 방식과 다릅니다.</div>
+    </div>
+
+    <div class="card">
+      <div class="barrow">
+        <div><div class="section-kicker">SOURCE TRANSPARENCY</div><h2>계산에 사용한 가정값</h2>
+          <div class="sub">실제로 계산에 반영된 8개 값과 근거자료를 보여줍니다. 출처 링크가 있으면 열 수 있고, ‘이력 보기’에서 과거 값으로 교체할 수 있습니다.</div></div>
+      </div>
+      <div class="data-scroll"><table>
+        <thead><tr><th>항목</th><th>계산에 사용 중인 값</th><th>근거자료 / 링크</th><th>기준일</th><th>입력자 역할</th><th>선택 상태</th><th>변경 기록</th></tr></thead>
+        <tbody id="assumptionsBody"></tbody>
+      </table></div>
+    </div>
+
+    <div class="card">
+      <div class="barrow">
+        <div><div class="section-kicker">AUDIT TRAIL / KPI</div><h2>비교 이력 및 성과 지표</h2>
+          <div class="sub">결과 저장 버튼을 누른 기록만 비교이력 시트에 남습니다.</div></div>
+        <button id="exportButton" class="ghost" type="button">↓ &nbsp;비교 이력 CSV 내보내기</button>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><div id="savedCount" class="value">—</div><div class="name">비교 결과 저장 건수</div></div>
+        <div class="kpi"><div id="avgTime" class="value">—</div><div class="name">결과까지 평균 소요시간</div></div>
+        <div class="kpi"><div id="referenceRatio" class="value">—</div><div class="name">참고 저장비율 (이력/입력 행)</div></div>
+      </div>
+      <div class="note">비교 이력은 결과를 저장한 시점의 금액을 기록합니다. 가정값을 과거 버전으로 바꿔도 기존 저장 결과의 금액은 변경되지 않습니다. PRD 정식 과정 KPI는 '가정 변경 1건' 및 입력-결과 연결 규칙이 미확정이므로, 현재 저장비율은 <b>참고 지표</b>입니다. 평균 소요시간은 최신 8개 입력 행 모두에 실제 자동 기록 시각이 남아 있는 이력에 한해서만 계산합니다.</div>
+      <div id="historyStatus" class="sub" style="margin:16px 0 9px"></div>
+      <div class="data-scroll"><table>
+        <thead><tr><th>변경 번호</th><th>KD 총비용</th><th>CBU 총비용</th><th>유리한 쪽</th><th>입력 시각</th><th>결과 저장 시각</th><th>소요시간(분)</th><th>사용 기준 행</th></tr></thead>
+        <tbody id="historyBody"></tbody>
+      </table></div>
+    </div>
+  </section>
+  <footer class="footer"><b>KD / CBU · COST INTELLIGENCE</b><span>1조 · 교육용 가상 데이터 기반 프로토타입 · 무료 Google Apps Script</span></footer>
+</main>
+<script id="kdcbu-demo-runtime">
+(() => {
+// Local Apps Script compatibility layer. No network calls.
+const DEMO_KEY = 'kdcbu_demo_v1';
+const encode = value => JSON.stringify(value, function(key, v) {
+  return this[key] instanceof Date ? {__kdcbuDate: this[key].toISOString()} : v;
+});
+const decode = value => JSON.parse(value, (key, v) =>
+  v && typeof v === 'object' && Object.keys(v).length === 1 && v.__kdcbuDate
+    ? new Date(v.__kdcbuDate) : v);
+let demoState = localStorage.getItem(DEMO_KEY);
+demoState = demoState ? decode(demoState) : {sheets: {}, properties: {}, seeded: false};
+function persistDemo() { localStorage.setItem(DEMO_KEY, encode(demoState)); }
+function richValue(value) {
+  return {getText: () => value.text, getLinkUrl: () => value.url || null};
+}
+function sheetMock(name) {
+  const data = demoState.sheets[name];
+  function range(row, col, height = 1, width = 1) {
+    if (![row, col, height, width].every(n => Number.isInteger(n) && n > 0)) throw new Error('잘못된 범위입니다.');
+    const key = (r, c) => (row + r) + ':' + (col + c);
+    const cell = (r, c) => data.rows[row + r - 1]?.[col + c - 1] ?? '';
+    const matrix = fn => Array.from({length: height}, (_, r) => Array.from({length: width}, (_, c) => fn(r, c)));
+    function write(values, rich) {
+      if (values.length !== height || values.some(v => v.length !== width)) throw new Error('범위 크기가 일치하지 않습니다.');
+      values.forEach((line, r) => line.forEach((v, c) => {
+        const target = data.rows[row + r - 1] ||= [];
+        target[col + c - 1] = rich ? v.getText() : v;
+        if (rich) data.rich[key(r, c)] = {text: v.getText(), url: v.getLinkUrl()};
+        else delete data.rich[key(r, c)];
+      }));
+      persistDemo(); return api;
+    }
+    const api = {
+      getValues: () => decode(encode(matrix(cell))),
+      getDisplayValues: () => matrix((r,c) => String(cell(r,c))),
+      setValues: values => write(values, false),
+      getRichTextValues: () => matrix((r,c) => richValue(data.rich[key(r,c)] || {text: String(cell(r,c)), url: null})),
+      setRichTextValues: values => write(values, true),
+      setRichTextValue: value => write([[value]], true),
+      getNotes: () => matrix((r,c) => data.notes[key(r,c)] || ''),
+      setNote: note => { matrix((r,c) => {data.notes[key(r,c)] = String(note);}); persistDemo(); return api; },
+      setNumberFormat: () => api, setBackground: () => api,
+      setFontColor: () => api, setFontWeight: () => api
+    };
+    return api;
+  }
+  const api = {
+    getName: () => name, getRange: range,
+    getLastRow: () => {
+      for (let i = data.rows.length - 1; i >= 0; i--) {
+        if (data.rows[i]?.some(v => v !== '' && v !== null && v !== undefined)) return i + 1;
+      }
+      return 0;
+    },
+    appendRow: values => {range(api.getLastRow() + 1, 1, 1, values.length).setValues([values]); return api;},
+    setFrozenRows: () => api, setColumnWidths: () => api
+  };
+  return api;
+}
+const demoSpreadsheet = {
+  getId: () => 'kdcbu-local-demo', getSpreadsheetTimeZone: () => 'Asia/Seoul',
+  getSheetByName: name => demoState.sheets[name] ? sheetMock(name) : null,
+  insertSheet: name => {
+    if (demoState.sheets[name]) throw new Error('이미 존재하는 시트입니다.');
+    demoState.sheets[name] = {rows: [], rich: {}, notes: {}};
+    persistDemo(); return sheetMock(name);
+  }
+};
+const SpreadsheetApp = {
+  getActiveSpreadsheet: () => demoSpreadsheet,
+  openById: id => {if (id !== demoSpreadsheet.getId()) throw new Error('알 수 없는 시트입니다.'); return demoSpreadsheet;},
+  flush: persistDemo,
+  newRichTextValue: () => {
+    let text = '', url = null;
+    const builder = {setText: v => {text = String(v); return builder;},
+      setLinkUrl: v => {url = v; return builder;}, build: () => richValue({text, url})};
+    return builder;
+  }
+};
+const PropertiesService = {getScriptProperties: () => ({
+  getProperty: key => demoState.properties[key] ?? null,
+  setProperty: (key, value) => {demoState.properties[key] = String(value); persistDemo(); return PropertiesService.getScriptProperties();}
+})};
+let demoLocked = false;
+const LockService = {getScriptLock: () => {
+  let owns = false;
+  const lock = {
+    tryLock: () => {if (demoLocked) return false; demoLocked = owns = true; return true;},
+    waitLock: () => {if (!lock.tryLock()) throw new Error('다른 저장 작업이 진행 중입니다.');},
+    releaseLock: () => {if (owns) {demoLocked = owns = false;}}
+  }; return lock;
+}};
+const Utilities = {
+  formatDate: (date, timezone, pattern) => {
+    const parts = Object.fromEntries(new Intl.DateTimeFormat('en-GB', {
+      timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'
+    }).formatToParts(date).map(p => [p.type, p.value]));
+    return pattern.replace(/yyyy|MM|dd|HH|mm|ss/g, token => parts[{
+      yyyy:'year', MM:'month', dd:'day', HH:'hour', mm:'minute', ss:'second'
+    }[token]]);
+  },
+  formatString: (format, value) => format.replace(/%0(\d+)d/g, (_, n) => String(value).padStart(Number(n), '0'))
+};
+const HtmlService = {createHtmlOutputFromFile: () => {
+  const output = {setTitle: () => output, addMetaTag: () => output}; return output;
+}};
+
+// BEGIN ORIGINAL Code.gs (verbatim)
+/**
+ * KD/CBU 비교 프로토타입 - PRD Must 1~3 + 보조 기능
+ * 교육용 가상 데이터 전용. 실제 통관/수출 비용 산정에 사용하지 마세요.
+ *
+ * 기존 가정입력 시트 A:F 열 및 행을 삭제하거나 변경하지 않습니다.
+ * 비교이력 시트가 없으면 첫 실행/조회 때 자동 생성합니다.
+ */
+const CONFIG = {
+  inputSheet: '가정입력',
+  historySheet: '비교이력',
+  inputHeaders: ['항목', '값', '출처', '기준일', '입력자 역할', '입력 시각'],
+  historyHeaders: ['변경 번호', 'KD 총비용', 'CBU 총비용', '유리한 쪽', '입력 시각', '결과 저장 시각'],
+  requiredItems: [
+    '환율', 'KD 부품가격', 'KD 운임', 'KD 관세율', '현지 조립비',
+    'CBU 완성차가격', 'CBU 운임', 'CBU 관세율'
+  ],
+  legacyItems: ['운임', '관세율', '조립비'],
+  roles: ['사업기획 담당', '물류 담당', '통관 담당', '재무 담당', '생산 담당', '담당1', '담당2', '담당3'],
+  units: {
+    '환율': '원/달러',
+    'KD 부품가격': '달러/대',
+    'KD 운임': '달러/대',
+    'KD 관세율': '%',
+    '현지 조립비': '원/대',
+    'CBU 완성차가격': '달러/대',
+    'CBU 운임': '달러/대',
+    'CBU 관세율': '%'
+  }
+};
+
+/** 스프레드시트 > 확장 프로그램 > Apps Script에서 처음 한 번 실행 */
+function setup() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss) {
+    throw new Error('원본 구글 시트의 확장 프로그램 > Apps Script에서 setup을 실행해 주세요.');
+  }
+  getInputSheet_(ss);
+  getHistorySheet_(ss);
+  PropertiesService.getScriptProperties().setProperty('SPREADSHEET_ID', ss.getId());
+  return '연결 완료: 가정입력 확인 / 비교이력 준비 완료';
+}
+
+function doGet() {
+  return HtmlService.createHtmlOutputFromFile('index')
+    .setTitle('KD/CBU 공통 기준 비교')
+    .addMetaTag('viewport', 'width=device-width, initial-scale=1');
+}
+
+function getInitialData() {
+  const ss = getSpreadsheet_();
+  getInputSheet_(ss);
+  getHistorySheet_(ss);
+  return {
+    items: CONFIG.requiredItems,
+    legacyItems: CONFIG.legacyItems,
+    roles: CONFIG.roles,
+    units: CONFIG.units,
+    descriptions: {
+      '환율':'미국 달러 1달러를 원화로 바꿀 때 사용하는 환율',
+      'KD 부품가격':'해외 조립에 필요한 부품 한 대분의 수출 가격',
+      'KD 운임':'KD 부품을 현지 공장까지 운송하는 대당 비용',
+      'KD 관세율':'KD 부품 수입에 적용한다고 가정한 관세율',
+      '현지 조립비':'현지 공장에서 차량 한 대를 조립하는 비용',
+      'CBU 완성차가격':'완성차 한 대를 수출하는 가격',
+      'CBU 운임':'완성차를 현지 시장까지 운송하는 대당 비용',
+      'CBU 관세율':'완성차 수입에 적용한다고 가정한 관세율'
+    },
+    departments: {
+      '환율':'재무', 'KD 부품가격':'사업기획 / 구매', 'KD 운임':'물류',
+      'KD 관세율':'통관', '현지 조립비':'생산', 'CBU 완성차가격':'사업기획',
+      'CBU 운임':'물류', 'CBU 관세율':'통관'
+    },
+    today: Utilities.formatDate(new Date(), ss.getSpreadsheetTimeZone(), 'yyyy-MM-dd')
+  };
+}
+
+/** Must 1: 원본 A:F 뒤에 새 행으로 저장 (기존 행 보존) */
+function saveAssumption(data) {
+  if (!data || typeof data !== 'object') throw new Error('입력 데이터가 없습니다.');
+  const item = String(data.item || '').trim();
+  const source = String(data.source || '').trim();
+  const baseDate = String(data.baseDate || '').trim();
+  const role = String(data.role || '').trim();
+  const evidenceUrl = String(data.evidenceUrl || '').trim();
+  if (evidenceUrl && (!safeEvidenceUrl_(evidenceUrl) || evidenceUrl.length > 500)) {
+    throw new Error('근거자료 링크는 https://로 시작하는 URL만 사용할 수 있습니다 (500자 이하).');
+  }
+  const allowed = CONFIG.requiredItems.concat(CONFIG.legacyItems);
+  if (!allowed.includes(item)) throw new Error('항목을 목록에서 선택해 주세요.');
+  const value = number_(data.value);
+  if (value === null) throw new Error('값에는 유효한 숫자를 입력해 주세요.');
+  if (CONFIG.requiredItems.includes(item)) {
+    const issue = valueIssue_(item, value);
+    if (issue) throw new Error(issue);
+  }
+  if (!source || source.length > 200) throw new Error('출처를 1~200자로 입력해 주세요.');
+  if (!validDate_(baseDate)) throw new Error('기준일을 yyyy-MM-dd 형식으로 입력해 주세요.');
+  if (!CONFIG.roles.includes(role)) throw new Error('입력자 역할을 선택해 주세요.');
+
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(15000)) throw new Error('다른 저장 작업이 진행 중입니다. 다시 시도해 주세요.');
+  try {
+    const ss = getSpreadsheet_();
+    const sheet = getInputSheet_(ss);
+    const row = sheet.getLastRow() + 1;
+    const now = new Date();
+    // 수식처럼 시작하는 문자열이 시트에서 실행되지 않도록 이스케이프
+    const safeSource = /^[=+\-@]/.test(source) ? "'" + source : source;
+    sheet.getRange(row, 4).setNumberFormat('@');
+    sheet.getRange(row, 6).setNumberFormat('yyyy-mm-dd hh:mm:ss');
+    sheet.getRange(row, 1, 1, 6).setValues([[
+      item, value, safeSource, baseDate, role, now
+    ]]);
+    if (evidenceUrl) {
+      // 출처(C열)의 글자는 그대로, 클릭 가능한 자료 URL만 연결. 새 열 불필요.
+      sheet.getRange(row, 3).setRichTextValue(
+        SpreadsheetApp.newRichTextValue().setText(safeSource).setLinkUrl(evidenceUrl).build()
+      );
+    }
+    // 새 항목 입력은 해당 항목의 최신값으로 자동 전환. 기존 행은 유지.
+    const overrides = readOverrides_();
+    delete overrides[item];
+    writeOverrides_(overrides);
+    SpreadsheetApp.flush();
+    return {
+      row: row, item: item, value: value, source: source,
+      baseDate: baseDate, role: role, evidenceUrl: evidenceUrl,
+      savedAt: dateTimeText_(now, ss.getSpreadsheetTimeZone())
+    };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/** Must 2 + Must 3 화면 조회. 조회 동작은 결과 이력에 새 행을 쓰지 않음 */
+function getDashboardData() {
+  const ss = getSpreadsheet_();
+  getHistorySheet_(ss);
+  return {
+    comparison: buildComparison_(ss),
+    history: buildHistory_(ss)
+  };
+}
+
+// 기존 이름으로 호출하는 코드와의 호환을 유지합니다.
+function getComparison() {
+  return buildComparison_(getSpreadsheet_());
+}
+
+/** Must 3: 사용자가 '결과 저장'을 누를 때만 비교이력 A:F에 기록 */
+function saveComparison() {
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(15000)) throw new Error('다른 저장 작업이 진행 중입니다. 다시 시도해 주세요.');
+  try {
+    const ss = getSpreadsheet_();
+    const c = buildComparison_(ss); // 저장 시점 기준으로 서버에서 재계산
+    if (!c.ready) {
+      throw new Error('계산에 필요한 값이 없거나 유효하지 않습니다. 입력값을 확인해 주세요.');
+    }
+    const sheet = getHistorySheet_(ss);
+    const row = sheet.getLastRow() + 1;
+    const version = 'CHG-' + Utilities.formatString('%04d', row - 1);
+    const now = new Date();
+    // 최신 8개 입력행 가운데 입력 시각이 비어 있으면 KPI 측정값은 공란.
+    // 시트에 수동 붙여넣은 데이터를 자동 저장 기록처럼 꾸미지 않습니다.
+    const inputTime = c.inputTimeValid ? new Date(c.inputTimeEpoch) : '';
+
+    sheet.getRange(row, 5, 1, 2).setNumberFormat('yyyy-mm-dd hh:mm:ss');
+    sheet.getRange(row, 2, 1, 2).setNumberFormat('#,##0.00');
+    sheet.getRange(row, 1, 1, 6).setValues([[
+      version, c.kd, c.cbu, c.winner, inputTime, now
+    ]]);
+    // PRD A:F 열 그대로 유지하면서 계산에 사용한 행 번호를 메모에 보관.
+    sheet.getRange(row, 1).setNote('계산에 사용한 입력행: ' +
+      c.assumptions.map(function(a) { return a.item + '=' + (a.row || '-'); }).join(' / '));
+    SpreadsheetApp.flush();
+
+    return {
+      row: row,
+      version: version,
+      winner: c.winner,
+      savedAt: dateTimeText_(now, ss.getSpreadsheetTimeZone()),
+      inputTime: inputTime ? dateTimeText_(inputTime, ss.getSpreadsheetTimeZone()) : '',
+      missingInputTime: !c.inputTimeValid
+    };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/** 선택값을 삭제/덮어쓰지 않고 활성 기준만 변경합니다. 모든 사용자가 같은 기준을 봅니다. */
+function setActiveAssumption(item, row) {
+  item = String(item || '').trim();
+  row = Number(row);
+  if (!CONFIG.requiredItems.includes(item) || !Number.isInteger(row) || row < 2) {
+    throw new Error('유효한 항목과 이력 행을 선택해 주세요.');
+  }
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(15000)) throw new Error('다른 기준 변경 작업 중입니다. 다시 시도해 주세요.');
+  try {
+    const ss = getSpreadsheet_();
+    const sheet = getInputSheet_(ss);
+    if (row > sheet.getLastRow()) throw new Error('선택한 이력 행이 존재하지 않습니다.');
+    const selected = sheet.getRange(row, 1, 1, 6).getValues()[0];
+    if (String(selected[0]).trim() !== item) throw new Error('항목과 선택한 기록이 일치하지 않습니다.');
+    const val = number_(selected[1]);
+    const issue = valueIssue_(item, val);
+    if (issue) throw new Error('선택할 수 없는 값입니다: ' + issue);
+    const overrides = readOverrides_();
+    const rows = getInputSheet_(ss).getRange(2, 1, sheet.getLastRow() - 1, 2).getValues();
+    let lastForItem = null;
+    rows.forEach(function(r, index) { if (String(r[0]).trim() === item) lastForItem = index + 2; });
+    if (row === lastForItem) delete overrides[item];
+    else overrides[item] = row;
+    writeOverrides_(overrides);
+    return {item: item, row: row, isPrevious: row !== lastForItem};
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/** 기존 기록의 출처 제목은 바꾸지 않고 링크만 연결/교체합니다. */
+function setEvidenceLink(item, row, url) {
+  item = String(item || '').trim();
+  row = Number(row);
+  url = String(url || '').trim();
+  if (!CONFIG.requiredItems.includes(item) || !Number.isInteger(row) || row < 2) {
+    throw new Error('항목 또는 기록 행이 올바르지 않습니다.');
+  }
+  if (!safeEvidenceUrl_(url) || url.length > 500) {
+    throw new Error('https://로 시작하는 근거자료 링크만 연결할 수 있습니다.');
+  }
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(15000)) throw new Error('다른 저장 작업 중입니다. 잠시 후 다시 시도해 주세요.');
+  try {
+    const sh = getInputSheet_(getSpreadsheet_());
+    if (row > sh.getLastRow()) throw new Error('기록이 존재하지 않습니다.');
+    const record = sh.getRange(row, 1, 1, 6).getValues()[0];
+    if (String(record[0] || '').trim() !== item) throw new Error('항목과 기록이 일치하지 않습니다.');
+    const label = String(record[2] || '').trim();
+    if (!label) throw new Error('근거자료 제목(출처)이 비어 있어 링크를 연결할 수 없습니다.');
+    const safeLabel = /^[=+\-@]/.test(label) ? "'" + label : label;
+    sh.getRange(row, 3).setRichTextValue(
+      SpreadsheetApp.newRichTextValue().setText(safeLabel).setLinkUrl(url).build()
+    );
+    SpreadsheetApp.flush();
+    return {item: item, row: row};
+  } finally { lock.releaseLock(); }
+}
+
+/** 해당 항목의 전체 기록 가운데 최근 100개 반환. 선택된 이전 행은 별도 포함. */
+function getItemHistory(item) {
+  item = String(item || '').trim();
+  if (!CONFIG.requiredItems.includes(item)) throw new Error('이력을 조회할 항목을 선택해 주세요.');
+  const ss = getSpreadsheet_();
+  const sheet = getInputSheet_(ss);
+  const tz = ss.getSpreadsheetTimeZone();
+  const last = sheet.getLastRow();
+  if (last < 2) return {item: item, records: [], total: 0, activeRow: null};
+  const rows = sheet.getRange(2, 1, last - 1, 6).getValues();
+  const rich = sheet.getRange(2, 3, last - 1, 1).getRichTextValues();
+  const list = [];
+  rows.forEach(function(r, i) {
+    if (String(r[0] || '').trim() !== item) return;
+    list.push({row: i + 2, item: item, value: number_(r[1]),
+      source: String(r[2] || ''), evidenceUrl: evidenceLink_(rich[i][0], r[2]),
+      baseDate: dateText_(r[3], tz), role: String(r[4] || ''),
+      savedAt: dateTimeText_(r[5], tz), issue: valueIssue_(item, number_(r[1]))});
+  });
+  const overrides = readOverrides_();
+  const newest = list.length ? list[list.length - 1].row : null;
+  const selected = list.some(function(r) { return r.row === overrides[item]; }) ? overrides[item] : newest;
+  const recent = list.slice(-100).reverse();
+  const chosen = list.find(function(r) { return r.row === selected; });
+  if (chosen && !recent.some(function(r) { return r.row === selected; })) recent.push(chosen);
+  return {item: item, unit: CONFIG.units[item], records: recent,
+    total: list.length, activeRow: selected, latestRow: newest};
+}
+
+function readOverrides_() {
+  try {
+    const v = JSON.parse(PropertiesService.getScriptProperties().getProperty('ACTIVE_ASSUMPTION_ROWS') || '{}');
+    return v && typeof v === 'object' && !Array.isArray(v) ? v : {};
+  } catch (e) { return {}; }
+}
+function writeOverrides_(overrides) {
+  PropertiesService.getScriptProperties().setProperty('ACTIVE_ASSUMPTION_ROWS', JSON.stringify(overrides));
+}
+function safeEvidenceUrl_(url) {
+  return /^https:\/\/[a-z0-9][^\s<>'"`]*$/i.test(url);
+}
+function evidenceLink_(rich, source) {
+  let url = '';
+  try { if (rich) url = rich.getLinkUrl() || ''; } catch(e) {}
+  if (!url) {
+    const str = String(source || '').trim();
+    if (/^https:\/\//i.test(str)) url = str;
+  }
+  return safeEvidenceUrl_(url) && url.length <= 500 ? url : '';
+}
+
+function buildComparison_(ss) {
+  const sheet = getInputSheet_(ss);
+  const timezone = ss.getSpreadsheetTimeZone();
+  const lastRow = sheet.getLastRow();
+  const rows = lastRow > 1 ? sheet.getRange(2, 1, lastRow - 1, 6).getValues() : [];
+  const latest = {};
+  const byRow = {};
+  let inputRecordCount = 0;
+  const links = lastRow > 1 ? sheet.getRange(2, 3, lastRow - 1, 1).getRichTextValues() : [];
+  rows.forEach(function(row, index) {
+    const item = String(row[0] || '').trim();
+    if (!CONFIG.requiredItems.includes(item)) return;
+    inputRecordCount++;
+    const record = {
+      item: item,
+      value: number_(row[1]),
+      source: String(row[2] == null ? '' : row[2]),
+      evidenceUrl: evidenceLink_(links[index] ? links[index][0] : null, row[2]),
+      baseDate: dateText_(row[3], timezone),
+      role: String(row[4] || ''),
+      savedAt: dateTimeText_(row[5], timezone),
+      savedAtEpoch: dateEpoch_(row[5]),
+      row: index + 2
+    };
+    latest[item] = record;
+    byRow[record.row] = record;
+  });
+  const overrides = readOverrides_();
+  const active = {};
+  CONFIG.requiredItems.forEach(function(item) {
+    const chosen = byRow[overrides[item]];
+    active[item] = chosen && chosen.item === item ? chosen : latest[item];
+  });
+
+  const missing = [];
+  const invalid = [];
+  const values = {};
+  const assumptions = CONFIG.requiredItems.map(function(item) {
+    const record = active[item];
+    if (!record) {
+      missing.push(item);
+      return {
+        item: item, unit: CONFIG.units[item], value: null, source: '',
+        baseDate: '', role: '', savedAt: '', row: null, evidenceUrl: '', latestRow: null,
+        isPrevious: false, status: '미입력'
+      };
+    }
+    const issue = valueIssue_(item, record.value);
+    if (issue) invalid.push(issue);
+    values[item] = record.value;
+    return {
+      item: item, unit: CONFIG.units[item], value: record.value,
+      source: record.source, evidenceUrl: record.evidenceUrl, baseDate: record.baseDate,
+      role: record.role, savedAt: record.savedAt,
+      row: record.row, latestRow: latest[item] ? latest[item].row : null,
+      isPrevious: Boolean(latest[item] && record.row !== latest[item].row),
+      status: issue ? '값 확인 필요' : '계산에 사용'
+    };
+  });
+
+  const warning = [];
+  const previousItems = CONFIG.requiredItems.filter(function(item) {
+    return active[item] && latest[item] && active[item].row !== latest[item].row;
+  });
+  if (previousItems.length) warning.push('이전 기록을 선택한 항목: ' + previousItems.join(' / ') + '. 자동 최신값이 아니므로 선택한 기준을 확인해 주세요.');
+  const selected = CONFIG.requiredItems.map(function(item) { return active[item]; }).filter(Boolean);
+  const baseDates = Array.from(new Set(selected.map(function(r) { return r.baseDate; }).filter(Boolean)));
+  if (baseDates.length > 1) {
+    warning.push('기준일이 서로 다릅니다 (' + baseDates.join(' / ') + '). 동일 기준일인지 확인해 주세요.');
+  }
+  if (selected.some(function(r) { return !r.baseDate || !validDate_(r.baseDate); })) {
+    warning.push('일부 기준일이 없거나 형식이 올바르지 않습니다.');
+  }
+  if (selected.some(function(r) { return !r.source.trim(); })) {
+    warning.push('일부 입력값의 출처가 비어 있습니다.');
+  }
+  const inputTimeValid = selected.length === CONFIG.requiredItems.length &&
+    selected.every(function(r) { return r.savedAtEpoch !== null; });
+  const inputTimeEpoch = inputTimeValid
+    ? Math.max.apply(null, selected.map(function(r) { return r.savedAtEpoch; }))
+    : null;
+  if (!inputTimeValid) {
+    warning.push('선정된 최신 입력행에 입력 시각이 없는 값이 있어 소요시간 KPI를 측정할 수 없습니다. 수동 붙여넣기 데이터는 입력 시각을 자동 추정하지 않습니다.');
+  }
+
+  const response = {
+    ready: false, missing: missing, invalid: invalid, warning: warning,
+    assumptions: assumptions, inputRecordCount: inputRecordCount,
+    inputTimeValid: inputTimeValid, inputTimeEpoch: inputTimeEpoch,
+    inputTime: inputTimeValid ? dateTimeText_(new Date(inputTimeEpoch), timezone) : '',
+    kd: null, cbu: null, difference: null, winner: '',
+    differencePercent: null, breakdown: null
+  };
+  if (missing.length || invalid.length) return response;
+
+  // 교육용 단순 가정: 통관/부가세/현지 세금/내륙물류 등 실무 항목은 반영하지 않음
+  const rate = values['환율'];
+  const kdParts = values['KD 부품가격'] * rate;
+  const kdFreight = values['KD 운임'] * rate;
+  const kdDuty = (kdParts + kdFreight) * values['KD 관세율'] / 100;
+  const kdAssembly = values['현지 조립비'];
+  const cbuVehicle = values['CBU 완성차가격'] * rate;
+  const cbuFreight = values['CBU 운임'] * rate;
+  const cbuDuty = (cbuVehicle + cbuFreight) * values['CBU 관세율'] / 100;
+  const kd = kdParts + kdFreight + kdDuty + kdAssembly;
+  const cbu = cbuVehicle + cbuFreight + cbuDuty;
+  const all = [kdParts, kdFreight, kdDuty, kdAssembly, cbuVehicle, cbuFreight, cbuDuty, kd, cbu];
+  if (all.some(function(n) { return !Number.isFinite(n) || Math.abs(n) > Number.MAX_SAFE_INTEGER; })) {
+    response.invalid.push('계산 결과가 너무 큽니다. 입력값을 확인해 주세요.');
+    return response;
+  }
+
+  response.ready = true;
+  response.kd = kd;
+  response.cbu = cbu;
+  response.winner = Math.abs(kd - cbu) < 0.000001 ? '동일' : (kd < cbu ? 'KD' : 'CBU');
+  response.difference = Math.abs(kd - cbu);
+  response.differencePercent = Math.max(kd, cbu) > 0
+    ? (response.difference / Math.max(kd, cbu)) * 100 : 0;
+  response.breakdown = {
+    kd: [
+      {name: 'KD 부품가격 환산', value: kdParts},
+      {name: 'KD 운임 환산', value: kdFreight},
+      {name: 'KD 관세(단순 가정)', value: kdDuty},
+      {name: '현지 조립비', value: kdAssembly}
+    ],
+    cbu: [
+      {name: 'CBU 완성차가격 환산', value: cbuVehicle},
+      {name: 'CBU 운임 환산', value: cbuFreight},
+      {name: 'CBU 관세(단순 가정)', value: cbuDuty}
+    ]
+  };
+  return response;
+}
+
+function buildHistory_(ss) {
+  const sheet = getHistorySheet_(ss);
+  const timezone = ss.getSpreadsheetTimeZone();
+  const lastRow = sheet.getLastRow();
+  const rows = lastRow > 1 ? sheet.getRange(2, 1, lastRow - 1, 6).getValues() : [];
+  const history = [];
+  const notes = lastRow > 1 ? sheet.getRange(2, 1, lastRow - 1, 1).getNotes() : [];
+  const validDurations = [];
+  rows.forEach(function(row, index) {
+    if (!String(row[0] || '').trim()) return;
+    const inputEpoch = dateEpoch_(row[4]);
+    const resultEpoch = dateEpoch_(row[5]);
+    const elapsed = inputEpoch !== null && resultEpoch !== null && resultEpoch >= inputEpoch
+      ? (resultEpoch - inputEpoch) / 60000 : null;
+    if (elapsed !== null) validDurations.push(elapsed);
+    history.push({
+      row: index + 2,
+      version: String(row[0]),
+      kd: number_(row[1]),
+      cbu: number_(row[2]),
+      winner: String(row[3] || ''),
+      inputTime: dateTimeText_(row[4], timezone),
+      resultTime: dateTimeText_(row[5], timezone),
+      elapsedMinutes: elapsed,
+      usedRowsNote: notes[index] ? String(notes[index][0] || '') : ''
+    });
+  });
+  const count = history.length;
+  return {
+    records: history.reverse(), // 신규순
+    savedCount: count,
+    measuredCount: validDurations.length,
+    avgMinutes: validDurations.length
+      ? validDurations.reduce(function(a, b) { return a + b; }, 0) / validDurations.length
+      : null
+  };
+}
+
+function getSpreadsheet_() {
+  const id = PropertiesService.getScriptProperties().getProperty('SPREADSHEET_ID');
+  if (!id) throw new Error('Apps Script 편집기에서 setup을 한 번 실행해 주세요.');
+  return SpreadsheetApp.openById(id);
+}
+
+function getInputSheet_(ss) {
+  const sheet = ss.getSheetByName(CONFIG.inputSheet);
+  if (!sheet) throw new Error('가정입력 탭이 없습니다. 기존 탭 이름을 확인해 주세요.');
+  assertHeaders_(sheet, CONFIG.inputHeaders);
+  return sheet;
+}
+
+function getHistorySheet_(ss) {
+  let sheet = ss.getSheetByName(CONFIG.historySheet);
+  if (!sheet) {
+    // 빈 시트만 자동 추가. 기존 데이터나 원본 탭은 건드리지 않습니다.
+    sheet = ss.insertSheet(CONFIG.historySheet);
+    sheet.getRange(1, 1, 1, 6).setValues([CONFIG.historyHeaders]);
+    sheet.getRange(1, 1, 1, 6)
+      .setBackground('#173C70').setFontColor('#FFFFFF').setFontWeight('bold');
+    sheet.setFrozenRows(1);
+    sheet.setColumnWidths(1, 6, 175);
+  }
+  assertHeaders_(sheet, CONFIG.historyHeaders);
+  return sheet;
+}
+
+function assertHeaders_(sheet, headers) {
+  const actual = sheet.getRange(1, 1, 1, headers.length).getDisplayValues()[0];
+  if (!headers.every(function(header, i) { return actual[i] === header; })) {
+    throw new Error('"' + sheet.getName() + '" 탭의 A1:F1 열 이름/순서를 확인해 주세요: ' + headers.join(' / '));
+  }
+}
+
+function number_(value) {
+  if (typeof value !== 'number' && typeof value !== 'string') return null;
+  if (String(value).trim() === '') return null;
+  const result = Number(value);
+  return Number.isFinite(result) ? result : null;
+}
+
+function valueIssue_(item, value) {
+  if (value === null) return item + ': 숫자를 입력해 주세요.';
+  if (item === '환율' && value <= 0) return '환율은 0보다 커야 합니다.';
+  if (value < 0) return item + ': 음수는 사용할 수 없습니다.';
+  return '';
+}
+
+function validDate_(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const d = new Date(value + 'T00:00:00Z');
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === value;
+}
+
+function dateText_(value, timezone) {
+  if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    return Utilities.formatDate(value, timezone, 'yyyy-MM-dd');
+  }
+  return value === null || value === undefined || value === '' ? '' : String(value).trim();
+}
+
+function dateTimeText_(value, timezone) {
+  if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    return Utilities.formatDate(value, timezone, 'yyyy-MM-dd HH:mm:ss');
+  }
+  return value === null || value === undefined || value === '' ? '' : String(value).trim();
+}
+
+function dateEpoch_(value) {
+  if (value instanceof Date && !Number.isNaN(value.getTime())) return value.getTime();
+  if (typeof value === 'string' && value.trim()) {
+    const parsed = Date.parse(value.trim().replace(' ', 'T'));
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  return null;
+}
+
+// END ORIGINAL Code.gs
+// Provision the spreadsheet before the original UI makes its first RPC.
+if (!demoSpreadsheet.getSheetByName(CONFIG.inputSheet)) {
+  demoSpreadsheet.insertSheet(CONFIG.inputSheet).appendRow(CONFIG.inputHeaders);
+}
+setup();
+if (!demoState.seeded) {
+  const today = getInitialData().today;
+  const values = [1350, 12000, 700, 5, 2500000, 18000, 1200, 15];
+  for (let round = 0; round < 2; round++) {
+    CONFIG.requiredItems.forEach((item, i) => saveAssumption({
+      item, value: values[i] * (round ? 1 : 0.98),
+      source: '교육용 가상 데이터', baseDate: today, role: CONFIG.roles[i % CONFIG.roles.length]
+    }));
+    saveComparison();
+  }
+  demoState.seeded = true; persistDemo();
+}
+const demoServerFunctions = Object.create(null);
+// Capture server functions before the original UI declares functions with identical names.
+demoServerFunctions.setup = setup;
+demoServerFunctions.doGet = doGet;
+demoServerFunctions.getInitialData = getInitialData;
+demoServerFunctions.saveAssumption = saveAssumption;
+demoServerFunctions.getDashboardData = getDashboardData;
+demoServerFunctions.getComparison = getComparison;
+demoServerFunctions.saveComparison = saveComparison;
+demoServerFunctions.setActiveAssumption = setActiveAssumption;
+demoServerFunctions.setEvidenceLink = setEvidenceLink;
+demoServerFunctions.getItemHistory = getItemHistory;
+demoServerFunctions.readOverrides_ = readOverrides_;
+demoServerFunctions.writeOverrides_ = writeOverrides_;
+demoServerFunctions.safeEvidenceUrl_ = safeEvidenceUrl_;
+demoServerFunctions.evidenceLink_ = evidenceLink_;
+demoServerFunctions.buildComparison_ = buildComparison_;
+demoServerFunctions.buildHistory_ = buildHistory_;
+demoServerFunctions.getSpreadsheet_ = getSpreadsheet_;
+demoServerFunctions.getInputSheet_ = getInputSheet_;
+demoServerFunctions.getHistorySheet_ = getHistorySheet_;
+demoServerFunctions.assertHeaders_ = assertHeaders_;
+demoServerFunctions.number_ = number_;
+demoServerFunctions.valueIssue_ = valueIssue_;
+demoServerFunctions.validDate_ = validDate_;
+demoServerFunctions.dateText_ = dateText_;
+demoServerFunctions.dateTimeText_ = dateTimeText_;
+demoServerFunctions.dateEpoch_ = dateEpoch_;
+function demoRunner(success, failure) {
+  return new Proxy(Object.create(null), {get(target, name) {
+    if (name === 'withSuccessHandler') return handler => demoRunner(handler, failure);
+    if (name === 'withFailureHandler') return handler => demoRunner(success, handler);
+    return (...args) => {
+      const payload = JSON.parse(JSON.stringify(args));
+      setTimeout(() => {
+        let result;
+        try {
+          if (!Object.hasOwn(demoServerFunctions, name)) throw new Error('알 수 없는 서버 함수: ' + String(name));
+          const value = demoServerFunctions[name](...payload);
+          result = value === undefined ? null : JSON.parse(JSON.stringify(value));
+        } catch (error) {
+          if (failure) failure(new Error(error && error.message ? error.message : String(error)));
+          else console.error(error);
+          return;
+        }
+        if (success) success(result);
+      }, 0);
+    };
+  }});
+}
+window.google = {script: {run: demoRunner(null, null)}};
+if (typeof document !== 'undefined') {
+  const banner = document.createElement('div');
+  banner.style.cssText = 'padding:7px 12px;background:#f1f5f9;color:#64748b;font:12px/1.5 sans-serif;text-align:center;';
+  banner.appendChild(document.createTextNode('데모 버전 · 가상 데이터 · 입력은 이 브라우저에만 저장됩니다 · '));
+  const reset = document.createElement('button');
+  reset.type = 'button'; reset.textContent = '초기화';
+  reset.style.cssText = 'font:inherit;color:inherit;padding:1px 6px;background:transparent;border:1px solid #cbd5e1;border-radius:4px;cursor:pointer;';
+  reset.addEventListener('click', () => {localStorage.removeItem(DEMO_KEY); window.location.reload();});
+  banner.appendChild(reset); document.body.prepend(banner);
+}
+})();
+</script>
+<script>
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const nf = new Intl.NumberFormat('ko-KR', {maximumFractionDigits:2});
+  const pf = new Intl.NumberFormat('ko-KR', {maximumFractionDigits:1});
+  let units = {}, descriptions = {}, departments = {};
+  let savingInput = false, dashboardLoading = false, resultSaving = false, switching = false;
+  let itemRequestId = 0, exported = [], inputCount = 0;
+
+  function number(n) {return n == null ? '—' : nf.format(n);}
+  function reason(e) {return e && e.message ? e.message : String(e);}
+  function status(id, content, kind) {
+    const el = $(id);
+    el.textContent = content || '';
+    el.className = 'message ' + (kind || '');
+  }
+  function child(tag, content, className) {
+    const el = document.createElement(tag);
+    if (content !== undefined) el.textContent = String(content);
+    if (className) el.className = className;
+    return el;
+  }
+  function option(select, value, label) {
+    const op = child('option', label || value);
+    op.value = value;
+    select.appendChild(op);
+  }
+  function safeHref(input) {
+    try {
+      const url = new URL(input);
+      return url.protocol === 'https:' && url.hostname && !url.username && !url.password ? url.href : '';
+    } catch(e) {return '';}
+  }
+  function sourceBlock(target, name, link) {
+    target.replaceChildren();
+    const wrap = child('div', undefined, 'source-cell');
+    wrap.appendChild(child('div', name || '—'));
+    const url = safeHref(link);
+    if (url) {
+      const a = child('a', '↗ 근거자료 열기', 'safe-link');
+      a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+      wrap.appendChild(a);
+    } else wrap.appendChild(child('div', '연결된 자료 링크 없음', 'source-detail'));
+    target.appendChild(wrap);
+  }
+
+  function showPanel(summary) {
+    $('inputPanel').hidden = summary;
+    $('summaryPanel').hidden = !summary;
+    $('inputTab').classList.toggle('active', !summary);
+    $('summaryTab').classList.toggle('active', summary);
+    $('inputTab').setAttribute('aria-pressed', String(!summary));
+    $('summaryTab').setAttribute('aria-pressed', String(summary));
+    if (summary) loadDashboard();
+  }
+  $('inputTab').addEventListener('click', ()=>showPanel(false));
+  $('summaryTab').addEventListener('click', ()=>showPanel(true));
+  $('quickCompare').addEventListener('click', ()=>showPanel(true));
+  $('refreshButton').addEventListener('click', loadDashboard);
+  $('saveComparisonButton').addEventListener('click', saveComparison);
+  $('exportButton').addEventListener('click', exportCsv);
+  $('reloadItemHistory').addEventListener('click', loadItemHistory);
+  $('item').addEventListener('change', onItemChanged);
+  $('evidenceUrl').addEventListener('input', function() {
+    const url = safeHref(this.value.trim());
+    $('linkPreview').hidden = !url;
+    if (url) $('linkPreview').href = url;
+    else $('linkPreview').removeAttribute('href');
+  });
+
+  function onItemChanged() {
+    const item = $('item').value;
+    $('unit').textContent = units[item] ? '단위: ' + units[item] : '항목을 선택하면 단위가 나옵니다.';
+    if (descriptions[item]) {
+      $('itemExplainer').replaceChildren();
+      $('itemExplainer').appendChild(child('b', item + ' · ' + units[item]));
+      $('itemExplainer').appendChild(child('div', '의미: ' + descriptions[item]));
+      $('itemExplainer').appendChild(child('div', '관련 부서 예시: ' + departments[item] + ' / 실제 담당 부서는 조직에 따라 달라질 수 있습니다.'));
+    } else {
+      $('itemExplainer').textContent = item
+        ? '과거 호환 항목입니다. 새 KD/CBU 비용 비교에는 사용되지 않습니다.'
+        : '먼저 항목을 선택해 주세요.';
+    }
+    loadItemHistory();
+  }
+
+  function loadItemHistory() {
+    const item = $('item').value;
+    const request = ++itemRequestId;
+    $('historyChips').replaceChildren();
+    $('historyDetail').hidden = true;
+    $('historyDetail').replaceChildren();
+    if (!descriptions[item]) {
+      $('itemHistoryStatus').textContent = '위에서 KD/CBU 계산에 사용하는 8개 항목 중 하나를 선택하세요.';
+      $('currentSelection').textContent = '비교에 사용할 항목을 선택해 주세요.';
+      return;
+    }
+    $('itemHistoryStatus').textContent = '기존 입력 기록을 불러오는 중…';
+    google.script.run
+      .withSuccessHandler(data => {
+        if (request !== itemRequestId || $('item').value !== item) return;
+        renderItemHistory(data);
+      })
+      .withFailureHandler(e => {
+        if (request !== itemRequestId) return;
+        $('itemHistoryStatus').textContent = '이력 조회 실패: ' + reason(e);
+      })
+      .getItemHistory(item);
+  }
+
+  function renderItemHistory(data) {
+    const box = $('historyChips'); box.replaceChildren();
+    const records = data.records || [];
+    $('itemHistoryStatus').textContent = '총 ' + data.total + '개 기록' +
+      (data.total > 100 ? ' (최근 100개와 현재 선택 기록 표시)' : '') +
+      ' · 아래 태그를 눌러 상세정보를 확인할 수 있습니다.';
+    const selected = records.find(r=>r.row===data.activeRow);
+    $('currentSelection').replaceChildren();
+    if (selected) {
+      $('currentSelection').appendChild(child('b','계산에 적용 중: ' + number(selected.value) + ' ' + data.unit));
+      $('currentSelection').appendChild(child('span','기준일 '+ (selected.baseDate || '미기록') + ' / 시트 '+selected.row+'행'));
+      $('currentSelection').appendChild(child('span',selected.row === data.latestRow ? '· 최신 입력값' : '· 직접 선택한 과거 값', 'state-pill'+(selected.row===data.latestRow?'':' older')));
+    } else $('currentSelection').textContent = '이 항목은 아직 저장된 값이 없습니다.';
+    if (!records.length) {
+      box.appendChild(child('p','저장된 기록이 없습니다. 위에서 가상 값을 입력하고 저장해 보세요.','understated'));
+      return;
+    }
+    records.forEach(r => {
+      const btn = child('button', undefined, 'history-chip' + (r.row===data.activeRow?' current':''));
+      btn.type = 'button';
+      btn.appendChild(child('span',number(r.value) + ' ' + data.unit));
+      btn.appendChild(child('span',r.baseDate || '날짜 없음','mini-date'));
+      if (r.row === data.activeRow) btn.appendChild(child('span','✓ 사용 중','mini-check'));
+      btn.setAttribute('aria-label',data.item+' '+number(r.value)+' '+data.unit+' '+r.baseDate+' 상세보기');
+      btn.addEventListener('click',()=>showItemDetail(data,r));
+      box.appendChild(btn);
+    });
+    if (selected) showItemDetail(data,selected);
+  }
+
+  function showItemDetail(data, r) {
+    const el = $('historyDetail');
+    el.hidden = false; el.replaceChildren();
+    el.appendChild(child('b','선택한 기록 상세 · '+ data.item));
+    el.appendChild(child('div','값: '+number(r.value)+' '+data.unit+' / 기준일: '+(r.baseDate||'—')));
+    el.appendChild(child('div','입력자 역할: '+(r.role||'—')+' / 시트: '+r.row+'행 / 저장 시각: '+(r.savedAt||'수동 붙여넣기 · 미기록')));
+    const source = child('div');
+    sourceBlock(source,'출처: '+(r.source||'—'),r.evidenceUrl);
+    el.appendChild(source);
+    const linkEditor=child('details');
+    linkEditor.appendChild(child('summary',r.evidenceUrl?'근거자료 링크 변경':'이 기존 기록에 근거자료 링크 연결'));
+    const linkInput=child('input');
+    linkInput.type='url'; linkInput.maxLength=500; linkInput.placeholder='https://drive.google.com/...';
+    linkInput.value=r.evidenceUrl||'';
+    linkInput.setAttribute('aria-label',r.item+' 근거자료 링크');
+    linkInput.style.margin='9px 0';
+    linkEditor.appendChild(linkInput);
+    const addLink=child('button','근거자료 링크 저장','tiny-button');
+    addLink.type='button';
+    addLink.addEventListener('click',()=>{
+      const url=safeHref(linkInput.value.trim());
+      if (!url) { $('itemHistoryStatus').textContent='근거자료 URL은 https:// 주소만 사용할 수 있습니다.';return; }
+      if (switching) return;
+      switching=true; addLink.disabled=true;
+      $('itemHistoryStatus').textContent='기록에 근거자료 링크를 연결하고 있습니다…';
+      google.script.run
+        .withSuccessHandler(()=>{
+          switching=false;
+          $('itemHistoryStatus').textContent='자료 링크를 연결했습니다. 비교 요약 화면에서도 클릭할 수 있습니다.';
+          loadItemHistory();
+        })
+        .withFailureHandler(e=>{
+          switching=false;addLink.disabled=false;
+          $('itemHistoryStatus').textContent='링크 저장 실패: '+reason(e);
+        })
+        .setEvidenceLink(data.item,r.row,url);
+    });
+    linkEditor.appendChild(addLink);
+    el.appendChild(linkEditor);
+    if (r.issue) {
+      el.appendChild(child('div','적용 불가: '+r.issue,'message error'));
+      return;
+    }
+    if (r.row === data.activeRow) {
+      el.appendChild(child('div','✓ 현재 비교 계산에 적용 중인 값입니다.','compare-alert'));
+    } else {
+      const btn = child('button','이 기록을 계산 기준값으로 적용','primary');
+      btn.type='button'; btn.disabled=switching;
+      btn.addEventListener('click',()=>switchActive(data.item,r.row));
+      el.appendChild(btn);
+    }
+  }
+  function switchActive(item,row) {
+    if (switching) return;
+    if (!window.confirm(item+'의 '+row+'행 값을 공통 계산 기준으로 사용할까요?\n기존 시트 기록은 그대로 유지됩니다.')) return;
+    switching = true;
+    $('itemHistoryStatus').textContent = '선택한 계산 기준을 변경 중…';
+    google.script.run
+      .withSuccessHandler(data=>{
+        switching=false;
+        $('itemHistoryStatus').textContent='변경 완료: '+data.item+'의 '+data.row+'행을 계산 기준으로 선택했습니다.';
+        loadItemHistory();
+        status('summaryStatus','선택된 계산 기준이 바뀌었습니다. 비교 화면에서 최신 값 다시 계산을 눌러 주세요.','info');
+      })
+      .withFailureHandler(e=>{
+        switching=false;
+        $('itemHistoryStatus').textContent='기준 변경 실패: '+reason(e);
+      })
+      .setActiveAssumption(item,row);
+  }
+
+  status('inputStatus','구글 시트 연결을 확인하는 중…','info');
+  google.script.run
+    .withSuccessHandler(data => {
+      units=data.units || {}; descriptions=data.descriptions || {}; departments=data.departments || {};
+      $('item').replaceChildren();
+      const choose=option($('item'),'','항목 선택');
+      $('item').options[0].disabled=true;
+      data.items.forEach(it=>option($('item'),it,it+' · '+units[it]));
+      const old=child('optgroup'); old.label='기존 항목 (비교 계산 제외)';
+      data.legacyItems.forEach(it=>option(old,it,it)); $('item').appendChild(old);
+      $('role').replaceChildren(); option($('role'),'','담당 업무를 선택하세요');
+      $('role').options[0].disabled=true;
+      const current=child('optgroup');current.label='담당 업무 (권장)';
+      const legacy=child('optgroup');legacy.label='기존 역할명 호환';
+      data.roles.forEach(r=>(r.startsWith('담당')?legacy:current).appendChild(Object.assign(child('option',r.startsWith('담당')?r+' (기존 기록용)':r),{value:r})));
+      $('role').append(current,legacy);
+      $('baseDate').value=data.today;
+      $('fields').disabled=false;
+      $('item').value='환율';onItemChanged();
+      status('inputStatus','','');
+    })
+    .withFailureHandler(e=>status('inputStatus','연결 실패: '+reason(e)+'\n기존 Code.gs도 함께 교체했는지, setup을 실행했는지 확인해 주세요.','error'))
+    .getInitialData();
+
+  $('assumptionForm').addEventListener('submit',function(e) {
+    e.preventDefault();
+    if(savingInput || !this.reportValidity()) return;
+    const link=$('evidenceUrl').value.trim();
+    if(link && !safeHref(link)) {status('inputStatus','근거자료 링크는 https://로 시작하는 주소만 입력해 주세요.','error');return;}
+    savingInput=true; $('fields').disabled=true;
+    $('saveButton').textContent='저장 중…'; $('savedRecord').hidden=true;
+    status('inputStatus','새 가정값을 구글 시트에 추가하고 있습니다.','info');
+    const payload={item:$('item').value,value:$('value').value,source:$('source').value.trim(),
+      evidenceUrl:link,baseDate:$('baseDate').value,role:$('role').value};
+    google.script.run
+      .withSuccessHandler(data=>{
+        endInputSave();
+        status('inputStatus','저장 완료! '+data.item+'의 새 값이 가정입력 시트 '+data.row+'행에 기록됐습니다. 새 값이 계산 기준으로 적용됩니다.','success');
+        $('savedRecord').textContent='저장 내용: '+data.item+' = '+number(data.value)+' '+(units[data.item]||'')+
+          '\n출처: '+data.source+'\n기준일: '+data.baseDate+' / 입력자: '+data.role+'\n입력 시각: '+data.savedAt;
+        $('savedRecord').hidden=false;
+        $('value').value=''; $('evidenceUrl').value=''; $('linkPreview').hidden=true;
+        loadItemHistory();
+        $('results').hidden=true;
+        status('summaryStatus','새 값이 저장됐습니다. 비교 요약에서 다시 계산해 주세요.','info');
+      })
+      .withFailureHandler(e=>{
+        endInputSave();
+        status('inputStatus','저장 실패: '+reason(e)+'\n재시도 전에 시트에 이미 추가되지 않았는지 확인해 주세요.','error');
+      })
+      .saveAssumption(payload);
+  });
+  function endInputSave() {savingInput=false; $('fields').disabled=false; $('saveButton').textContent='공통 가정 저장';}
+
+  function loadDashboard() {
+    if(dashboardLoading) return;
+    if(savingInput || resultSaving || switching) {
+      status('summaryStatus','저장 또는 기준 변경 작업이 끝난 뒤 다시 조회해 주세요.','info');return;
+    }
+    dashboardLoading=true;
+    $('refreshButton').disabled=true; $('saveComparisonButton').disabled=true;
+    $('results').hidden=true;
+    status('summaryStatus','현재 선택된 8개 가정값으로 총비용을 계산하고 있습니다…','info');
+    google.script.run
+      .withSuccessHandler(d=>{
+        dashboardLoading=false; $('refreshButton').disabled=false;
+        renderComparison(d.comparison);renderHistory(d.history,d.comparison.inputRecordCount);
+      })
+      .withFailureHandler(e=>{
+        dashboardLoading=false; $('refreshButton').disabled=false;
+        status('summaryStatus','비교 조회 실패: '+reason(e),'error');
+      })
+      .getDashboardData();
+  }
+
+  function renderComparison(c) {
+    inputCount=c.inputRecordCount;
+    const tbody=$('assumptionsBody'); tbody.replaceChildren();
+    (c.assumptions||[]).forEach(r=>{
+      const tr=child('tr');
+      tr.appendChild(child('td',r.item));
+      tr.appendChild(child('td',r.value==null?'—':number(r.value)+' '+r.unit,'num'));
+      const source=child('td'); sourceBlock(source,r.source,r.evidenceUrl); tr.appendChild(source);
+      tr.appendChild(child('td',r.baseDate||'—'));
+      tr.appendChild(child('td',r.role||'—'));
+      const statusCell=child('td');
+      statusCell.appendChild(child('span',r.isPrevious?'과거 기록 선택':'최신 입력값',
+        'state-pill'+(r.isPrevious?' older':'')));
+      statusCell.appendChild(child('div',r.row ? r.row+'행 · '+(r.savedAt || '시각 미기록'):'입력 없음','sheet-cell'));
+      tr.appendChild(statusCell);
+      const editCell=child('td');
+      const btn=child('button','이력 보기 / 교체','tiny-button');
+      btn.type='button';
+      btn.addEventListener('click',()=>{
+        showPanel(false);
+        $('item').value=r.item;
+        onItemChanged();
+        $('itemHistoryCard').scrollIntoView({behavior:'smooth',block:'start'});
+      });
+      editCell.appendChild(btn);tr.appendChild(editCell);tbody.appendChild(tr);
+    });
+    const warnings=c.warning||[];
+    $('warningsBox').hidden=!warnings.length;
+    $('warnings').replaceChildren();
+    warnings.forEach(w=>$('warnings').appendChild(child('li',w)));
+    if(!c.ready){
+      const issues=[];
+      if(c.missing.length) issues.push('아직 입력되지 않은 항목: '+c.missing.join(' / '));
+      if(c.invalid.length) issues.push('값 확인: '+c.invalid.join(' / '));
+      issues.push('가정 입력에서 필요한 값을 저장하면 계산할 수 있습니다.');
+      status('summaryStatus',issues.join('\n'),'error');
+      $('results').hidden=true; $('saveComparisonButton').disabled=true;return;
+    }
+    $('kdCost').textContent=number(c.kd)+'원';
+    $('cbuCost').textContent=number(c.cbu)+'원';
+    $('winner').textContent=c.winner==='동일'
+      ? '두 방식의 예상 비용이 같습니다.'
+      : c.winner+' 방식이 한 대당 '+number(c.difference)+'원 저렴합니다. (비교한 두 금액 중 큰 값 대비 '+pf.format(c.differencePercent)+'% 차이)';
+    const max=Math.max(c.kd,c.cbu);
+    $('kdBar').style.width=(max?c.kd/max*100:0)+'%';
+    $('cbuBar').style.width=(max?c.cbu/max*100:0)+'%';
+    breakdown('kdBreakdown',c.breakdown.kd);
+    breakdown('cbuBreakdown',c.breakdown.cbu);
+    $('results').hidden=false; $('saveComparisonButton').disabled=false;
+    status('summaryStatus','계산 완료! 아래 결과 → 비용 구성 → 사용 근거자료 순서로 확인하세요. 결과를 남기려면 ‘비교이력에 저장’을 누르세요.','success');
+  }
+  function breakdown(id,rows) {
+    const root=$(id);root.replaceChildren();
+    (rows||[]).forEach(r=>{
+      const line=child('div',undefined,'costline');
+      line.appendChild(child('span',r.name));line.appendChild(child('span',number(r.value)+'원'));
+      root.appendChild(line);
+    });
+  }
+
+  function saveComparison() {
+    if(resultSaving||dashboardLoading||savingInput||switching) return;
+    resultSaving=true;
+    $('saveComparisonButton').disabled=true;
+    $('saveComparisonButton').textContent='비교 결과 저장 중…';
+    status('resultSaveStatus','현재 기준으로 서버에서 다시 계산해 비교이력 시트에 저장합니다…','info');
+    google.script.run
+      .withSuccessHandler(data=>{
+        resultSaving=false;
+        $('saveComparisonButton').textContent='이 계산 결과를 비교이력에 저장';
+        status('resultSaveStatus','기록 완료: '+data.version+' · 시트 '+data.row+'행'+
+          (data.missingInputTime?'\n입력 시각이 없는 수동 데이터가 있어 소요시간 KPI는 미측정으로 기록됩니다.':''),'success');
+        loadDashboard();
+      })
+      .withFailureHandler(e=>{
+        resultSaving=false;$('saveComparisonButton').disabled=false;
+        $('saveComparisonButton').textContent='이 계산 결과를 비교이력에 저장';
+        status('resultSaveStatus','저장 실패: '+reason(e)+'\n재시도 전에 비교이력 시트에 새 행이 생겼는지 확인해 주세요.','error');
+      })
+      .saveComparison();
+  }
+
+  function renderHistory(h,count) {
+    exported=h.records||[];
+    $('savedCount').textContent=number(h.savedCount)+'건';
+    $('avgTime').textContent=h.avgMinutes==null?'측정 불가':number(h.avgMinutes)+'분';
+    $('referenceRatio').textContent=count?pf.format(h.savedCount/count*100)+'%':'—';
+    $('historyStatus').textContent='저장된 비교 결과 '+h.savedCount+'건 / 소요시간을 측정할 수 있는 이력 '+h.measuredCount+'건 / 아래에는 최근 50건 표시';
+    const tbody=$('historyBody');tbody.replaceChildren();
+    if(!exported.length) {
+      const row=child('tr'),td=child('td','이력이 없습니다. 위에서 비교 결과를 저장하면 여기에 나타납니다.','empty');
+      td.colSpan=8;row.appendChild(td);tbody.appendChild(row);return;
+    }
+    exported.slice(0,50).forEach(r=>{
+      const row=child('tr');
+      const vals=[r.version,number(r.kd)+'원',number(r.cbu)+'원',r.winner,
+        r.inputTime||'미기록',r.resultTime||'—',r.elapsedMinutes==null?'—':number(r.elapsedMinutes)];
+      vals.forEach((v,i)=>row.appendChild(child('td',v,[1,2,6].includes(i)?'num':'')));
+      const noteCell=child('td');
+      if(r.usedRowsNote) {
+        const det=child('details');
+        det.appendChild(child('summary','사용한 행 확인'));
+        det.appendChild(child('div',r.usedRowsNote,'understated'));
+        noteCell.appendChild(det);
+      } else noteCell.textContent='이전 기록 · 행 정보 없음';
+      row.appendChild(noteCell);tbody.appendChild(row);
+    });
+  }
+
+  function exportCsv() {
+    if(!exported.length) {status('summaryStatus','아직 내보낼 비교 이력이 없습니다.','info');return;}
+    const headers=['변경 번호','KD 총비용','CBU 총비용','유리한 쪽','입력 시각','결과 저장 시각'];
+    const cells=[headers].concat(exported.slice().reverse().map(r=>[
+      r.version,r.kd,r.cbu,r.winner,r.inputTime,r.resultTime]));
+    const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+    const content='\ufeff'+cells.map(row=>row.map(q).join(',')).join('\r\n');
+    const url=URL.createObjectURL(new Blob([content],{type:'text/csv;charset=utf-8'}));
+    const a=child('a');a.href=url;a.download='KD_CBU_비교이력.csv';
+    document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+  }
+</script>
+
+</body>
+</html>
