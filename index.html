@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>상품전략/MI 직무 지원자 포트폴리오 Hub</title>
+<style>
+body{font-size:16px;line-height:1.6;color:#1F2937;background:#fff;margin:0;font-family:Inter,Pretendard,-apple-system,BlinkMacSystemFont,system-ui,Roboto,sans-serif}
+*,::before,::after{box-sizing:border-box;border:0 solid #e5e7eb}
+h1,h2,h3,h4,p{margin:0;font-weight:inherit;font-size:inherit}
+a{color:inherit;text-decoration:none}
+button,input,textarea{font:inherit;color:inherit;margin:0;background:none}
+button{cursor:pointer}
+svg{display:block}
+:root{--blue:#002C5F;--active:#00AAD2;--light:#F4F7FA}
+html{scroll-behavior:smooth}
+::-webkit-scrollbar{width:8px}::-webkit-scrollbar-track{background:#F1F5F9}::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:4px}
+::selection{background:var(--active);color:#fff}
+.wrap{max-width:72rem;margin:0 auto;padding:0 1rem}
+@media(min-width:640px){.wrap{padding:0 1.5rem}}
+@media(min-width:1024px){.wrap{padding:0 2rem}}
+header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.9);backdrop-filter:blur(12px);border-bottom:1px solid #f3f4f6;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.hd{height:4rem;display:flex;align-items:center;justify-content:space-between}
+.row{display:flex;align-items:center;gap:.75rem}
+.dot{width:.75rem;height:.75rem;border-radius:9999px;background:var(--blue)}
+.brand{font-weight:700;font-size:1.125rem;color:var(--blue);letter-spacing:-.025em}
+nav{display:none;gap:2rem;font-weight:500;color:#4b5563}
+nav a:hover{color:var(--blue)}
+@media(min-width:768px){nav{display:flex}}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:.5rem .75rem;font-size:.875rem;font-weight:600;border-radius:.5rem;transition:all .2s}
+.btn-o{color:var(--blue);border:1px solid var(--blue)}.btn-o:hover{background:var(--light)}
+.btn-p{color:#fff;background:var(--blue);padding:.5rem 1rem;box-shadow:0 1px 2px rgba(0,0,0,.05)}.btn-p:hover{background:rgba(0,44,95,.9)}
+.btn-g{color:#374151;background:#fff;border:1px solid #d1d5db;padding:.875rem 1.5rem;font-size:1rem}.btn-g:hover{background:#f9fafb}
+.btn-l{padding:.875rem 1.5rem;font-size:1rem;box-shadow:0 4px 6px -1px rgba(0,0,0,.1)}
+.hide-sm{display:none}@media(min-width:640px){.hide-sm{display:inline-flex}}
+.hero{background:linear-gradient(to bottom,var(--light),#fff);padding:5rem 0;overflow:hidden}
+@media(min-width:1024px){.hero{padding:7rem 0}}
+.badge{display:inline-flex;align-items:center;gap:.5rem;padding:.375rem .75rem;border-radius:9999px;background:#fff;border:1px solid #e5e7eb;font-size:.875rem;font-weight:500;color:var(--blue);box-shadow:0 1px 2px rgba(0,0,0,.05);margin-bottom:1.5rem}
+.badge i{width:.5rem;height:.5rem;border-radius:9999px;background:var(--active)}
+.hero h2{font-size:1.25rem;font-weight:600;color:#6b7280;letter-spacing:.025em;margin-bottom:.5rem}
+.hero h1{font-size:1.875rem;font-weight:800;color:#111827;letter-spacing:-.025em;line-height:1.25}
+@media(min-width:640px){.hero h1{font-size:3rem}.hero h2{font-size:1.5rem}}
+.sub{font-size:1.125rem;color:#4b5563;margin:1rem 0 2rem;line-height:1.625}
+.proof{background:#fff;border-left:4px solid var(--blue);padding:1rem;border-radius:0 .5rem .5rem 0;box-shadow:0 1px 2px rgba(0,0,0,.05);margin-bottom:2.5rem}
+.proof small{display:block;font-size:.875rem;color:#6b7280;font-weight:600;margin-bottom:.25rem}
+.proof p{color:#374151;font-weight:500}
+.acts{display:flex;flex-direction:column;gap:1rem}@media(min-width:640px){.acts{flex-direction:row}}
+.sec{padding:4rem 0;border-top:1px solid #f3f4f6}@media(min-width:640px){.sec{padding:6rem 0}}
+.sec.light{background:var(--light)}
+.eyebrow{font-size:.75rem;font-weight:700;color:var(--active);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem}
+.title{font-size:1.5rem;font-weight:800;color:#111827}@media(min-width:640px){.title{font-size:1.875rem}.eyebrow{font-size:.875rem}}
+.head{margin-bottom:3rem}
+.grid{display:grid;gap:2rem;grid-template-columns:1fr}
+@media(min-width:768px){.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}}
+.box{background:var(--light);padding:1.5rem;border-radius:1rem;border:1px solid #e5e7eb}
+@media(min-width:640px){.box{padding:2rem}}
+.ico{padding:.75rem;background:#fff;color:var(--blue);border-radius:.75rem;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.box h4,.card h4.t{font-size:1.25rem;font-weight:700;color:#111827}
+.lbl{font-size:.75rem;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem}
+.pill{display:inline-flex;margin-left:.5rem;padding:.125rem .625rem;border-radius:9999px;font-size:.75rem;font-weight:600;background:#dbeafe;color:var(--blue)}
+.tag{padding:.5rem .875rem;border-radius:.5rem;background:#fff;color:#1f2937;font-size:.875rem;font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.05);border:1px solid #e5e7eb}
+.mv{background:#fff;padding:2rem;border-radius:1rem;border:1px solid #e5e7eb;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.mv p{color:#374151;line-height:1.625;font-weight:500}
+.step{padding:1.25rem;border-radius:.75rem;background:var(--light);border:1px solid #f3f4f6}
+.num{width:1.75rem;height:1.75rem;border-radius:9999px;background:var(--blue);color:#fff;font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-bottom:.75rem}
+.step b,.cp b{display:block;font-size:.875rem;font-weight:600;color:#111827;margin-bottom:.25rem}
+.step p,.cp p.d{font-size:.875rem;color:#4b5563}
+.note{padding:1.25rem;border-radius:.75rem;background:#eff6ff;border:1px solid #dbeafe;font-size:.875rem;color:#374151;display:flex;gap:.75rem;align-items:flex-start}
+.cp{background:#fff;padding:1.75rem;border-radius:1rem;border:1px solid #e5e7eb;box-shadow:0 1px 2px rgba(0,0,0,.05);display:flex;flex-direction:column;justify-content:space-between}
+.cp:hover{box-shadow:0 4px 6px -1px rgba(0,0,0,.1)}
+.cp .ci{width:3rem;height:3rem;border-radius:.75rem;background:var(--light);color:var(--blue);display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem}
+.cp h4{font-size:1.25rem;font-weight:700;margin-bottom:.75rem}
+.cp p.d{line-height:1.625;margin-bottom:1.5rem}
+.cp .tg{padding-top:1rem;border-top:1px solid #f3f4f6;font-size:.75rem;font-weight:600;color:var(--blue)}
+.card{background:#fff;padding:1.5rem;border-radius:1rem;border:1px solid #e5e7eb;box-shadow:0 1px 2px rgba(0,0,0,.05);cursor:pointer;transition:all .2s}
+.card:hover{box-shadow:0 4px 6px -1px rgba(0,0,0,.1);border-color:var(--blue)}
+.card .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.day{font-size:.75rem;font-weight:700;color:var(--blue);background:#eff6ff;padding:.25rem .625rem;border-radius:.375rem}
+.card h4.t{font-size:1.125rem;margin-bottom:1rem}
+.card .f{font-size:.75rem;color:#4b5563;display:grid;gap:.5rem}
+.card .f b{color:#1f2937;font-weight:600}
+.card .lk{display:inline-block;margin-top:.75rem;font-size:.8125rem;font-weight:600;color:#fff;background:var(--blue);padding:.375rem .75rem;border-radius:.375rem}
+.card .lk:hover{background:rgba(0,44,95,.9)}
+.card .lk[hidden]{display:none}
+.card svg{color:#9ca3af}.card:hover svg{color:var(--blue)}
+.contact{background:linear-gradient(to bottom,#fff,var(--light));text-align:center}
+.cbox{background:#fff;padding:2rem;border-radius:1rem;border:1px solid #e5e7eb;box-shadow:0 1px 2px rgba(0,0,0,.05);width:100%;max-width:32rem;margin:2rem auto 0}
+.cbox .mi{width:3rem;height:3rem;border-radius:9999px;background:var(--light);color:var(--blue);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem}
+.mail{font-size:1.125rem;font-weight:700;color:#1f2937;margin-bottom:1.5rem}
+footer{border-top:1px solid #e5e7eb;padding:2rem 0;text-align:center;font-size:.75rem;color:#6b7280}
+.modal{position:fixed;inset:0;z-index:50;background:rgba(17,24,39,.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal[hidden]{display:none}
+.mb{background:#fff;border-radius:1rem;max-width:32rem;width:100%;padding:1.5rem;box-shadow:0 25px 50px -12px rgba(0,0,0,.25);overflow-y:auto;max-height:90vh}
+.mb h3{font-size:1.25rem;font-weight:700;color:#111827}
+.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}
+.mb label{display:block;font-size:.875rem;font-weight:600;color:#374151;margin-bottom:.25rem}
+.mb input,.mb textarea{width:100%;border:1px solid #d1d5db;border-radius:.5rem;padding:.625rem;font-size:.875rem;outline:none;margin-bottom:1rem}
+.mb input:focus,.mb textarea:focus{box-shadow:0 0 0 2px var(--blue)}
+.mf{display:flex;justify-content:flex-end;gap:.75rem;margin-top:.5rem}
+.mf .c{padding:.5rem 1rem;border:1px solid #d1d5db;border-radius:.5rem;font-size:.875rem;font-weight:500;color:#374151}
+.mf .s{padding:.5rem 1rem;background:var(--blue);color:#fff;border-radius:.5rem;font-size:.875rem;font-weight:600}
+</style></head>
+<body>
+
+<header>
+ <div class="wrap hd">
+  <div class="row"><span class="dot"></span><span class="brand">MI Strategy Portfolio</span></div>
+  <nav>
+   <a href="#about">소개</a><a href="#mission">미션 &amp; 비전</a><a href="#competencies">핵심 역량</a><a href="#deliverables">결과물 Hub</a><a href="#contact">연락처</a>
+  </nav>
+  <div class="row">
+   <button onclick="openProfileModal()" class="btn btn-o">프로필 편집</button>
+   <a href="#deliverables" class="btn btn-p hide-sm">결과물 보기</a>
+  </div>
+ </div>
+</header>
+
+<section class="hero">
+ <div class="wrap" style="max-width:72rem"><div style="max-width:48rem">
+  <div class="badge"><i></i><span>현대자동차 · 양재본사 상품전략/MI 지원자</span></div>
+  <div>
+   <h2 id="userName">LEE</h2>
+   <h1 id="userHeroMessage">데이터로 변화를 읽고,<br>사람을 위한 결정을 잇겠습니다.</h1>
+  </div>
+  <p id="userSubMessage" class="sub">머신러닝과 경제 분석으로 시장의 신호를 발견하고,<br>인사이트를 전략적 판단으로 연결하겠습니다.</p>
+  <div class="proof"><small>핵심 근거 경험</small><p id="userHeroProof">공급 충격 지수 모델링과 머신러닝 예측 프로젝트를 통해 경제 현상을 데이터로 분석하고 있습니다.</p></div>
+  <div class="acts">
+   <a href="#deliverables" class="btn btn-p btn-l">결과물 보기</a>
+   <a href="#contact" class="btn btn-g">문의하기</a>
+  </div>
+ </div></div>
+</section>
+
+<section id="about" class="sec">
+ <div class="wrap">
+  <div class="head"><h2 class="eyebrow">ABOUT ME</h2><h3 class="title">학문적 기반 및 관심 분야</h3></div>
+  <div class="grid g2">
+   <div class="box">
+    <div class="row" style="margin-bottom:1.5rem"><div class="ico">🎓</div><h4>전공 및 교육 과정</h4></div>
+    <div style="display:grid;gap:1rem">
+     <div><p class="lbl">다전공 학업</p><p style="font-weight:500;color:#1f2937">자원환경경제학전공 · 해양수산경영학전공 · 빅데이터융합전공</p></div>
+     <div style="padding-top:.5rem;border-top:1px solid rgba(229,231,235,.6)"><p class="lbl">현재 참여 중인 교육</p><p style="font-weight:500;color:#1f2937">HINT 제조지능화 과정 <span class="pill">참여 중</span></p></div>
+    </div>
+   </div>
+   <div class="box">
+    <div class="row" style="margin-bottom:1.5rem"><div class="ico">🧭</div><h4>주요 관심 분야</h4></div>
+    <div style="display:flex;flex-wrap:wrap;gap:.625rem">
+     <span class="tag">자동차 시장</span><span class="tag">해운</span><span class="tag">제조지능화</span><span class="tag">데이터 기반 의사결정</span><span class="tag">에이전틱 AI</span>
+    </div>
+    <p style="margin-top:1.5rem;font-size:.875rem;color:#4b5563;line-height:1.625">경제학과 AI를 함께 학습하며 시장의 변화를 분석하고, 그 결과를 사람이 이해하고 활용할 수 있는 방향으로 전달하는 데 관심이 깊습니다.</p>
+   </div>
+  </div>
+ </div>
+</section>
+
+<section id="mission" class="sec light">
+ <div class="wrap">
+  <div class="head" style="text-align:center"><h2 class="eyebrow">MISSION &amp; VISION</h2><h3 class="title">지향점과 실천 방식</h3></div>
+  <div class="grid g2" style="gap:1.5rem;margin-bottom:3rem">
+   <div class="mv"><div class="row" style="margin-bottom:1rem"><div class="ico" style="background:var(--light)">🎯</div><h4 style="font-size:1.125rem;font-weight:700">나의 미션</h4></div>
+    <p>머신러닝과 경제 분석으로 시장 변화의 신호를 발견하고, 이를 사람이 이해하고 활용할 수 있는 인사이트로 전달해 더 나은 전략적 의사결정을 돕습니다.</p></div>
+   <div class="mv"><div class="row" style="margin-bottom:1rem"><div class="ico" style="background:var(--light)">👁</div><h4 style="font-size:1.125rem;font-weight:700">나의 비전</h4></div>
+    <p>데이터와 사람을 연결해 불확실한 변화에 함께 대응하고, 기술이 사람과 사회의 성장에 기여하는 미래를 만들고자 합니다.</p></div>
+  </div>
+  <div class="mv" style="margin-bottom:2rem">
+   <h4 style="font-size:1.125rem;font-weight:700;margin-bottom:1.5rem">비전으로 나아가는 나의 방식</h4>
+   <div class="grid g3" style="gap:1.5rem">
+    <div class="step"><span class="num">1</span><b>데이터 기반 변화 해석</b><p>공급 충격 지수 모델링과 머신러닝 예측 프로젝트를 통해 데이터를 근거로 변화를 해석합니다.</p></div>
+    <div class="step"><span class="num">2</span><b>협력적 조율과 다각도 경청</b><p>협력적 대화 활동에서의 갈등 조율 경험을 바탕으로 서로 다른 관점을 듣고 공동의 방향을 모색합니다.</p></div>
+    <div class="step"><span class="num">3</span><b>사회 상생 접점 탐구</b><p>중소기업 DB를 구축하는 지산학 프로젝트에 참여하며 데이터 활용과 지역사회 상생의 접점을 탐구합니다.</p></div>
+   </div>
+  </div>
+  <div class="note"><span>ℹ️</span><p><b style="color:var(--blue)">연결되는 현대자동차의 방향:</b> 현대자동차의 <b>‘휴머니티를 향한 진보’</b>와 Hyundai Way의 <b>‘데이터 기반 사고’</b>에서 영감을 받아 개인의 지원 지향점과 학습 방향성을 적립했습니다.</p></div>
+ </div>
+</section>
+
+<section id="competencies" class="sec">
+ <div class="wrap">
+  <div class="head"><h2 class="eyebrow">COMPETENCIES</h2><h3 class="title">핵심 역량 및 근거 경험</h3></div>
+  <div class="grid g3">
+   <div class="cp"><div><div class="ci">📊</div><h4>데이터 분석 및 예측</h4><p class="d">마케팅 수업에서 공급 충격 지수를 모델링했고, 머신러닝 예측 프로젝트와 논문 작성을 진행하고 있습니다.</p></div><div class="tg">#머신러닝 #공급충격지수 #데이터예측</div></div>
+   <div class="cp"><div><div class="ci">🌐</div><h4>시장·경제 환경 분석</h4><p class="d">경제학 학회에서 엘니뇨가 경제성장에 미치는 영향에 관심을 갖고, 경제신문을 정기적으로 분석했습니다.</p></div><div class="tg">#거시경제 #시장리서치 #기후경제</div></div>
+   <div class="cp"><div><div class="ci">👥</div><h4>전략 커뮤니케이션 &amp; 협업</h4><p class="d">협력적 대화 활동에서 소통 방식 갈등을 조율했습니다. 지산학 프로젝트에서는 중소기업 문제 해결과 지역상생을 위해 기업 DB를 구축하고 있습니다.</p></div><div class="tg">#갈등조율 #지산학 #기업DB구축</div></div>
+  </div>
+ </div>
+</section>
+
+<section id="deliverables" class="sec light">
+ <div class="wrap">
+  <div class="head"><h2 class="eyebrow">DELIVERABLES HUB</h2><h3 class="title">6일 도전 결과물 관리</h3>
+   <p style="font-size:.875rem;color:#4b5563;margin-top:.5rem">각 카드를 클릭하여 결과를 업데이트하거나 직접 확인할 수 있습니다.</p></div>
+  <div id="cards" class="grid g3" style="gap:1.5rem"></div>
+ </div>
+</section>
+
+<section id="contact" class="sec contact">
+ <div class="wrap" style="max-width:56rem">
+  <h2 style="font-size:1.875rem;font-weight:700;color:#111827;margin-bottom:1rem">Contact</h2>
+  <p style="color:#4b5563;max-width:32rem;margin:0 auto 2rem">데이터 분석 기반의 상품전략 및 시장 기획에 대한 대화는 언제든 환영합니다.</p>
+  <div class="cbox" style="margin-top:0">
+   <div class="mi">✉️</div>
+   <div id="userContactEmail" class="mail">pshteenha@naver.com</div>
+   <button onclick="sendEmail()" class="btn btn-p btn-l" style="padding:.875rem 2rem">이메일 보내기</button>
+  </div>
+ </div>
+</section>
+
+<div id="profileModal" class="modal" hidden>
+ <div class="mb">
+  <div class="mh"><h3>프로필 정보 편집</h3><button onclick="closeProfileModal()" style="color:#9ca3af;font-size:1.25rem">✕</button></div>
+  <label>지원자 이름/닉네임</label><input type="text" id="editUserName" placeholder="예: LEE">
+  <label>한 줄 메시지 (메인 헤드라인)</label><textarea id="editHeroMessage" rows="2"></textarea>
+  <label>보조 문구</label><textarea id="editSubMessage" rows="2"></textarea>
+  <label>근거 경험 한 줄</label><textarea id="editHeroProof" rows="2"></textarea>
+  <label>공개 이메일</label><input type="email" id="editContactEmail">
+  <div class="mf"><button class="c" onclick="closeProfileModal()">취소</button><button class="s" onclick="saveProfile()">저장하기</button></div>
+ </div>
+</div>
+
+<div id="cardModal" class="modal" hidden>
+ <div class="mb">
+  <div class="mh"><h3 id="modalDayTitle">Day 결과물 편집</h3><button onclick="closeCardModal()" style="color:#9ca3af;font-size:1.25rem">✕</button></div>
+  <input type="hidden" id="currentEditingDay">
+  <label>카드 제목</label><input type="text" id="editCardTitle">
+  <label>1. 문제</label><textarea id="editCardProb" rows="2"></textarea>
+  <label>2. 내가 한 일</label><textarea id="editCardWork" rows="2"></textarea>
+  <label>3. 사용 기술</label><input type="text" id="editCardTech">
+  <label>4. 결과</label><textarea id="editCardRes" rows="2"></textarea>
+  <div class="mf"><button class="c" onclick="closeCardModal()">취소</button><button class="s" onclick="saveCard()">저장하기</button></div>
+ </div>
+</div>
+
+<footer><div class="wrap">© 2026 현대자동차 양재본사 상품전략/MI 지원 포트폴리오 Hub.</div></footer>
+
+<script>
+const EMPTY = '내용을 입력해 주세요.';
+// 카드 초기 내용. link가 있으면 카드에 버튼이 표시됩니다.
+const CARDS = {
+ 2: {
+  title: 'Hyundai N Racing – 3D 아케이드 레이싱 게임',
+  prob: '자동차 브랜드 경험을 웹에서 바로 즐길 수 있는 가벼운 게임으로 만들고 싶었다.',
+  work: '내가 만든 웹 레이싱 게임. 메뉴 화면과 아케이드 서킷, 랩 기록, 드리프트 주행을 구성.',
+  tech: 'HTML/CSS/JavaScript, Three.js(3D), PeerJS(온라인 연결)',
+  res: '브라우저에서 바로 실행되는 게임 완성.',
+  link: ['게임 하기', 'game/index.html']
+ },
+ 3: {
+  title: 'PIONIQUE 브랜드 대시보드 (Apps Script 웹앱)',
+  prob: '브랜드 운영 데이터가 흩어져 있어 한눈에 보기 어렵다.',
+  work: 'Google 스프레드시트 데이터를 불러와 탭별로 보여주는 브랜드 대시보드 웹앱 제작.',
+  tech: 'Google Apps Script, Google 스프레드시트, HTML/CSS/JavaScript',
+  res: '웹앱 배포 완료. 링크로 바로 확인 가능.',
+  link: ['대시보드 열기', 'https://script.google.com/macros/s/AKfycbxg0IDAT--aVqIby9b1QJO6huaFdFRNmlarMWiXga7KGe0Gapk1wpT6qzXYVevKGYc/exec']
+ },
+ 4: {
+  title: '현대차 KD 사업기획 PT 면접 슬라이드',
+  prob: '관세가 바뀔 때마다 부서별로 따로 계산해 KD와 완성차 가격 판단이 늦어진다(예상).',
+  work: '10장 PT 자료 요약: 직무 소개, 가격 판단 문제 선정, 원인 3가지, 공통 가정표와 비교 계산기 제안, 입사 후 6개월 시범 적용 계획.',
+  tech: 'PowerPoint, AI 생성 일러스트',
+  res: '10장 PT 슬라이드와 발표 대본 완성. 숫자는 모두 가정값.',
+  link: ['슬라이드 열기', 'ppt/kd-pt-slides.pptx']
+ },
+ 5: {}, 6: {}
+};
+const EDIT_ICON = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 21h8"/><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>';
+const $ = id => document.getElementById(id);
+
+$('cards').innerHTML = [2,3,4,5,6].map(d => {
+ const c = CARDS[d];
+ return `<div onclick="openCardModal(${d})" class="card">
+  <div class="top"><span class="day">DAY ${d}</span>${EDIT_ICON}</div>
+  <h4 id="card-title-${d}" class="t">${c.title || 'Day '+d+' 결과물 자리'}</h4>
+  <div class="f">
+   <p><b>문제:</b> <span id="card-prob-${d}">${c.prob || EMPTY}</span></p>
+   <p><b>내가 한 일:</b> <span id="card-work-${d}">${c.work || EMPTY}</span></p>
+   <p><b>사용 기술:</b> <span id="card-tech-${d}">${c.tech || EMPTY}</span></p>
+   <p><b>결과:</b> <span id="card-res-${d}">${c.res || EMPTY}</span></p>
+  </div>
+  <a id="card-link-${d}" class="lk" ${c.link ? `href="${c.link[1]}" target="_blank" rel="noopener"` : 'hidden'} onclick="event.stopPropagation()">${c.link ? c.link[0] + ' ↗' : ''}</a>
+ </div>`;
+}).join('');
+
+function sendEmail(){ location.href = 'mailto:' + $('userContactEmail').innerText.trim(); }
+
+function openProfileModal(){
+ $('editUserName').value = $('userName').innerText.trim();
+ $('editHeroMessage').value = $('userHeroMessage').innerText.trim();
+ $('editSubMessage').value = $('userSubMessage').innerText.trim();
+ $('editHeroProof').value = $('userHeroProof').innerText.trim();
+ $('editContactEmail').value = $('userContactEmail').innerText.trim();
+ $('profileModal').hidden = false;
+}
+function closeProfileModal(){ $('profileModal').hidden = true; }
+function saveProfile(){
+ const m = {editUserName:'userName',editHeroMessage:'userHeroMessage',editSubMessage:'userSubMessage',editHeroProof:'userHeroProof',editContactEmail:'userContactEmail'};
+ for (const k in m){ const v = $(k).value.trim(); if (v) $(m[k]).innerText = v; }
+ closeProfileModal();
+}
+
+function openCardModal(day){
+ $('currentEditingDay').value = day;
+ $('modalDayTitle').innerText = `Day ${day} 결과물 편집`;
+ $('editCardTitle').value = $('card-title-'+day).innerText.trim();
+ [['Prob','prob'],['Work','work'],['Tech','tech'],['Res','res']].forEach(([E,e]) => {
+  const t = $(`card-${e}-${day}`).innerText.trim();
+  $('editCard'+E).value = t === EMPTY ? '' : t;
+ });
+ $('cardModal').hidden = false;
+}
+function closeCardModal(){ $('cardModal').hidden = true; }
+function saveCard(){
+ const day = $('currentEditingDay').value;
+ const title = $('editCardTitle').value.trim();
+ if (title) $('card-title-'+day).innerText = title;
+ [['Prob','prob'],['Work','work'],['Tech','tech'],['Res','res']].forEach(([E,e]) => {
+  $(`card-${e}-${day}`).innerText = $('editCard'+E).value.trim() || EMPTY;
+ });
+ closeCardModal();
+}
+</script>
+</body></html>
